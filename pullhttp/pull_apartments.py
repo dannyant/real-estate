@@ -21,10 +21,6 @@ def pull_sitemap_xml(sitemap):
     properties_data = properties_xml["urlset"]["url"]
     return properties_data
 
-
-def get_robots():
-    # The API endpoint
-
 def main(spark):
     url = "https://www.apartments.com/robots.txt"
     robots = pull_http(url)
