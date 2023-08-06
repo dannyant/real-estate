@@ -24,29 +24,20 @@ def pull_sitemap_xml(sitemap):
 
 def get_robots():
     # The API endpoint
+
+def main(spark):
     url = "https://www.apartments.com/robots.txt"
     robots = pull_http(url)
     p = re.compile('Sitemap: (.*)')
     robots_url = p.findall(robots)
-    urls_dataframe = pandas.DataFrame(robots_url, columns=["url"])
-    property_urls = urls_dataframe.applymap(lambda x: pull_sitemap_xml(x))
-    print(property_urls.values)
+
+    df = spark.createDataFrame(robots_url, ("url"))
+    property_urls = df.applymap(lambda x: pull_sitemap_xml(x))
     property_urls.writeStream().format("kafka").outputMode("append")\
         .option("kafka.bootstrap.servers", "192.168.1.100:9092")\
         .option("topic", "apartments_com_properties")\
         .start()\
         .awaitTermination()
-
-def main(spark):
-    df = spark.createDataFrame(
-        [(1, 1.0), (1, 2.0), (2, 3.0), (2, 5.0), (2, 10.0)],
-        ("id", "v"))
-
-    @pandas_udf("double")
-    def mean_udf(v: pandas.Series) -> float:
-        return v.mean()
-
-    print(df.groupby("id").agg(mean_udf(df['v'])).collect())
 
 
 if __name__ == "__main__":
