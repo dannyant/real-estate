@@ -30,7 +30,7 @@ def main(spark):
     df = spark.createDataFrame(robots_url, ("url"))
     property_urls = df.applymap(lambda x: pull_sitemap_xml(x))
     property_urls.writeStream().format("kafka").outputMode("append")\
-        .option("kafka.bootstrap.servers", "192.168.1.100:9092")\
+        .option("kafka.bootstrap.servers", "dannymain:9092")\
         .option("topic", "apartments_com_properties")\
         .start()\
         .awaitTermination()
