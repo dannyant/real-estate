@@ -1,10 +1,10 @@
+#!/usr/bin/python
+
 import gzip
 import re
 
-import pandas as pandas
 import xmltodict as xmltodict
 
-from pyspark.sql.functions import pandas_udf
 from pyspark.sql import SparkSession
 
 
@@ -19,6 +19,7 @@ def pull_sitemap_xml(sitemap):
     properties_unzipped = gzip.decompress(properties_zipped).decode('utf-8')
     properties_xml = xmltodict.parse(properties_unzipped)
     properties_data = properties_xml["urlset"]["url"]
+    print(properties_data)
     return properties_data
 
 def main(spark):
@@ -36,5 +37,4 @@ def main(spark):
         .awaitTermination()
 
 
-if __name__ == "__main__":
-    main(SparkSession.builder.getOrCreate())
+main(SparkSession.builder.getOrCreate())
