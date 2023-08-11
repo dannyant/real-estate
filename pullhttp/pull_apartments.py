@@ -4,6 +4,7 @@ import re
 
 import xmltodict as xmltodict
 from pyspark.shell import spark
+from pyspark.sql.types import StructType, StructField, StringType
 
 from base_http_pull import pull_http
 
@@ -24,8 +25,11 @@ def main():
     robots = pull_http(url)
     p = re.compile('Sitemap: (.*)')
     robots_url = p.findall(robots)
+    schema = StructType([
+        StructField("url", StringType())
+    ])
 
-    df = spark.createDataFrame(robots_url, ("url"))
+    df = spark.createDataFrame(data=robots_url, schema = schema)
     property_urls = df.applymap(lambda x: pull_sitemap_xml(x))
     property_urls.writeStream().format("kafka").outputMode("append")\
         .option("kafka.bootstrap.servers", "dannymain:9092")\
