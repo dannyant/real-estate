@@ -3,11 +3,13 @@ import gzip
 import re
 
 import xmltodict as xmltodict
-from pyspark.shell import spark
+from pyspark.shell import spark, sc
+from pyspark.sql.functions import udf, lit
 from pyspark.sql.types import StructType, StructField, StringType
 
 from base_http_pull import pull_http
 
+@udf
 def pull_sitemap_xml(sitemap):
     robots = pull_http(sitemap.strip(), as_text=False)
     robots_unzipped = gzip.decompress(robots).decode('utf-8')
@@ -28,10 +30,14 @@ def main():
     schema = StructType([
         StructField("url", StringType())
     ])
+    myrdd = sc.parallelize(robots_url)
 
-    df = spark.createDataFrame(data=robots_url, schema = schema)
-    property_urls = df.applymap(lambda x: pull_sitemap_xml(x))
-    property_urls.writeStream().format("kafka").outputMode("append")\
+    df = spark.createDataFrame(data=myrdd, schema = schema)
+    df = df.withColumn(
+        "property_url",
+        lit(pull_sitemap_xml(df["column1"]))
+    )
+    df.writeStream().format("kafka").outputMode("append")\
         .option("kafka.bootstrap.servers", "dannymain:9092")\
         .option("topic", "apartments_com_properties")\
         .start()\
