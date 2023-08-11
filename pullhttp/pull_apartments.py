@@ -1,12 +1,9 @@
 #!/usr/bin/python
-
 import gzip
 import re
 
 import xmltodict as xmltodict
-
-from pyspark.sql import SparkSession
-
+from pyspark.shell import spark
 
 from base_http_pull import pull_http
 
@@ -22,7 +19,7 @@ def pull_sitemap_xml(sitemap):
     print(properties_data)
     return properties_data
 
-def main(spark):
+def main():
     url = "https://www.apartments.com/robots.txt"
     robots = pull_http(url)
     p = re.compile('Sitemap: (.*)')
@@ -37,4 +34,4 @@ def main(spark):
         .awaitTermination()
 
 
-main(SparkSession.builder.getOrCreate())
+main()
