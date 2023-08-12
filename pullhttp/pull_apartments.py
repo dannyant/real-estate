@@ -2,6 +2,7 @@
 import gzip
 import re
 
+import pandas
 import xmltodict as xmltodict
 from pyspark.shell import spark, sc
 from pyspark.sql.functions import udf, lit
@@ -23,7 +24,7 @@ def pull_sitemap_xml(sitemap):
     properties_data = properties_xml["urlset"]["url"]
     print(properties_data)
     print("Sitemap Done Processing " + str(properties_data))
-    return properties_data
+    return pandas.DataFrame(properties_data)
 
 def main():
     print("Sitemap Startup")
@@ -39,10 +40,7 @@ def main():
 
     print("Sitemap RDD + " + str(myrdd.collect()))
     df = spark.createDataFrame(data=myrdd, schema = schema)
-    df_url = df.withColumn(
-        "value",
-        lit(pull_sitemap_xml(df["url"]))
-    )
+    df_url = df.apply(pull_sitemap_xml, axis=1)
     print("Sitemap RDD + " + str(df_url.collect()))
     df.write.format("kafka")\
         .option("kafka.bootstrap.servers", "dannymain:9092")\
