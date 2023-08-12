@@ -12,6 +12,7 @@ from base_http_pull import pull_http
 
 @udf
 def pull_sitemap_xml(sitemap):
+    print("Sitemap Processing " + str(sitemap))
     robots = pull_http(sitemap.strip(), as_text=False)
     robots_unzipped = gzip.decompress(robots).decode('utf-8')
     raw_robots = xmltodict.parse(robots_unzipped)
@@ -21,9 +22,11 @@ def pull_sitemap_xml(sitemap):
     properties_xml = xmltodict.parse(properties_unzipped)
     properties_data = properties_xml["urlset"]["url"]
     print(properties_data)
+    print("Sitemap Done Processing " + str(properties_data))
     return properties_data
 
 def main():
+    print("Sitemap Startup")
     url = "https://www.apartments.com/robots.txt"
     robots = pull_http(url)
     p = re.compile('Sitemap: (.*)')
@@ -31,8 +34,10 @@ def main():
     schema = StructType([
         StructField("url", StringType())
     ])
+
     myrdd = sc.parallelize(robots_url)
 
+    print("Sitemap RDD + " + str(myrdd))
     df = spark.createDataFrame(data=myrdd, schema = schema)
     df = df.withColumn(
         "value",
