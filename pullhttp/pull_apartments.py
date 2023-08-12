@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 import gzip
 import re
 
@@ -8,6 +8,7 @@ from pyspark.sql.functions import udf, lit
 from pyspark.sql.types import StructType, StructField, StringType
 
 from base_http_pull import pull_http
+
 
 @udf
 def pull_sitemap_xml(sitemap):
@@ -35,13 +36,11 @@ def main():
     df = spark.createDataFrame(data=myrdd, schema = schema)
     df = df.withColumn(
         "property_url",
-        lit(pull_sitemap_xml(df["column1"]))
+        lit(pull_sitemap_xml(df["url"]))
     )
-    df.writeStream().format("kafka").outputMode("append")\
+    df.write.format("kafka")\
         .option("kafka.bootstrap.servers", "dannymain:9092")\
         .option("topic", "apartments_com_properties")\
-        .start()\
-        .awaitTermination()
-
+        .save()
 
 main()
