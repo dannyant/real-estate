@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/python3.6
 import gzip
 import re
 
@@ -35,7 +35,7 @@ def main():
 
     df = spark.createDataFrame(data=myrdd, schema = schema)
     df = df.withColumn(
-        "property_url",
+        "value",
         lit(pull_sitemap_xml(df["url"]))
     )
     df.write.format("kafka")\
