@@ -2,16 +2,12 @@
 import gzip
 import re
 
-import pandas
 import xmltodict as xmltodict
-from pyspark.shell import spark, sc
-from pyspark.sql.functions import udf, lit
-from pyspark.sql.types import StructType, StructField, StringType
+from pyspark.shell import sc, spark
 
 from base_http_pull import pull_http
 
 
-@udf
 def pull_sitemap_xml(sitemap):
     print("Sitemap Processing " + str(sitemap))
     robots = pull_http(sitemap.strip(), as_text=False)
@@ -24,7 +20,7 @@ def pull_sitemap_xml(sitemap):
     properties_data = properties_xml["urlset"]["url"]
     print(properties_data)
     print("Sitemap Done Processing " + str(properties_data))
-    return pandas.DataFrame(properties_data)
+    return properties_data
 
 def main():
     print("Sitemap Startup")
@@ -32,16 +28,13 @@ def main():
     robots = pull_http(url)
     p = re.compile('Sitemap: (.*)')
     robots_url = p.findall(robots)
-    schema = StructType([
-        StructField("url", StringType())
-    ])
+    urls = []
+    for robot in robots_url:
+        urls += pull_sitemap_xml(robot)
 
-    myrdd = sc.parallelize([robots_url])
-
-    print("Sitemap RDD + " + str(myrdd.collect()))
+    myrdd = sc.parallelize([urls])
     df = spark.createDataFrame(data=myrdd, schema = schema)
-    df_url = pull_sitemap_xml(df["url"])
-    print("Sitemap RDD + " + str(df_url))
+
     df.write.format("kafka")\
         .option("kafka.bootstrap.servers", "dannymain:9092")\
         .option("topic", "apartments_com_properties")\
