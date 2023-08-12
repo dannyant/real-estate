@@ -37,12 +37,15 @@ def main():
 
     myrdd = sc.parallelize(robots_url)
 
-    print("Sitemap RDD + " + str(myrdd))
+    print("Sitemap RDD + " + str(myrdd.collect()))
     df = spark.createDataFrame(data=myrdd, schema = schema)
-    df = df.withColumn(
+    df_url = df["url"]
+    print("Sitemap RDD + " + str(df_url.collect()))
+    df_url = df_url.withColumn(
         "value",
-        lit(pull_sitemap_xml(df["url"]))
+        lit(pull_sitemap_xml(df_url["url"]))
     )
+    print("Sitemap RDD + " + str(df_url.collect()))
     df.write.format("kafka")\
         .option("kafka.bootstrap.servers", "dannymain:9092")\
         .option("topic", "apartments_com_properties")\
