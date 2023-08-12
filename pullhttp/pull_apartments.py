@@ -35,7 +35,7 @@ def main():
         StructField("url", StringType())
     ])
 
-    myrdd = sc.parallelize(robots_url)
+    myrdd = sc.parallelize([robots_url])
 
     print("Sitemap RDD + " + str(myrdd.collect()))
     df = spark.createDataFrame(data=myrdd, schema = schema)
