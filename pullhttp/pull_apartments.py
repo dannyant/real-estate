@@ -40,11 +40,8 @@ def main():
 
     print("Sitemap RDD + " + str(myrdd.collect()))
     df = spark.createDataFrame(data=myrdd, schema = schema)
-    df_url = df.withColumn(
-        "value",
-        lit(pull_sitemap_xml(df["url"]))
-    )
-    print("Sitemap RDD + " + str(df_url.collect()))
+    df_url = pull_sitemap_xml(df["url"])
+    print("Sitemap RDD + " + str(df_url))
     df.write.format("kafka")\
         .option("kafka.bootstrap.servers", "dannymain:9092")\
         .option("topic", "apartments_com_properties")\
