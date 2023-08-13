@@ -16,7 +16,7 @@ def pull_sitemap_xml(sitemap, url_list):
     raw_robots = xmltodict.parse(robots_unzipped)
     properties_zip_url = raw_robots["sitemapindex"]["sitemap"]
     print("DIcT TYPE = " + str(dict))
-    if properties_zip_url is dict:
+    if isinstance(properties_zip_url, dict):
         print("DICT = " + str(dict))
         properties_zip_url = [properties_zip_url]
     else:
