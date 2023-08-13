@@ -52,7 +52,7 @@ def main():
 
     print(urls)
     myrdd = sc.parallelize([urls])
-    df = spark.createDataFrame(data=myrdd, schema = schema)
+    df = spark.createDataFrame(data=myrdd)
 
     df.write.format("kafka")\
         .option("kafka.bootstrap.servers", "dannymain:9092")\
