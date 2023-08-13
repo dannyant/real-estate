@@ -7,6 +7,7 @@ from pyspark.shell import sc, spark
 
 from base_http_pull import pull_http
 
+spark.conf.set("spark.sql.debug.maxToStringFields", 1000)
 
 def pull_sitemap_xml(sitemap, url_list):
     print("Sitemap Processing " + str(sitemap))
@@ -54,9 +55,8 @@ def main():
     myrdd = sc.parallelize([urls])
     df = spark.createDataFrame(data=myrdd)
 
-    df.write.format("kafka")\
-        .option("kafka.bootstrap.servers", "dannymain:9092")\
-        .option("topic", "apartments_com_properties")\
-        .save()
-
+    df.write.format("jdbc").option("driver","com.mysql.cj.jdbc.Driver")\
+        .option("url", "jdbc:mysql://dannymain:3306/realestate")\
+        .option("dbtable", "apartments_property").option("user", "realestate")\
+        .option("password", "password").save()
 main()
