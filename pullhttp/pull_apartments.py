@@ -2,13 +2,8 @@
 import gzip
 import re
 
-import pandas
-import pymysql as pymysql
 import xmltodict as xmltodict
-from pyspark.shell import sql
-
-#from pyspark.shell import sql
-
+from pyspark.shell import sc, spark
 
 from base_http_pull import pull_http
 
@@ -17,12 +12,19 @@ def pull_sitemap_xml(sitemap, url_list):
     print("Sitemap Processing " + str(sitemap))
     robots = pull_http(sitemap.strip(), as_text=False)
     robots_unzipped = gzip.decompress(robots).decode('utf-8')
+    print("RAW RETURN " + str(robots_unzipped))
     raw_robots = xmltodict.parse(robots_unzipped)
     properties_zip_url = raw_robots["sitemapindex"]["sitemap"]
-    if type(properties_zip_url) is dict:
+    print("DIcT TYPE = " + str(dict))
+    if properties_zip_url is dict:
+        print("DICT = " + str(dict))
         properties_zip_url = [properties_zip_url]
+    else:
+        print(isinstance(properties_zip_url, dict))
+        print("NOT DICT = " + type(properties_zip_url))
 
     for prop_url_dict in properties_zip_url:
+        print("ZIP URL = " + str(prop_url_dict))
         loc_url = prop_url_dict["loc"]
         properties_zipped = pull_http(loc_url, as_text=False)
         properties_unzipped = gzip.decompress(properties_zipped).decode('utf-8')
@@ -43,25 +45,13 @@ def main():
     p = re.compile('Sitemap: (.*)')
     robots_url = p.findall(robots)
     urls = []
-    pull_sitemap_xml(robots_url[0], urls)
-    #for robot in robots_url:
-    #    if ".gz" not in robots:
-    #        continue
-    #    pull_sitemap_xml(robot, urls)
+    for robot in robots_url:
+        if ".gz" not in robots:
+            continue
+        pull_sitemap_xml(robot, urls)
 
-    #myrdd = sc.parallelize([urls])
-    #df = spark.createDataFrame(data=myrdd, schema = schema)
-    df = pandas.DataFrame(urls)
-
-    conn = pymysql.connect(host="dannymain",
-                           port=3306,
-                           user="realestate",
-                           passwd="password",
-                           db="realestate",
-                           charset='utf8')
-
-    sql.write_frame(df, con=conn, name='apartments_property',
-                    if_exists='replace', flavor='mysql')
+    myrdd = sc.parallelize([urls])
+    df = spark.createDataFrame(data=myrdd, schema = schema)
 
     df.write.format("kafka")\
         .option("kafka.bootstrap.servers", "dannymain:9092")\
