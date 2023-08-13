@@ -44,9 +44,11 @@ def main():
     p = re.compile('Sitemap: (.*)')
     robots_url = p.findall(robots)
     urls = []
+    i = 0
     for robot in robots_url:
-        if ".gz" in robots:
+        if ".gz" in robots and i == 0:
             pull_sitemap_xml(robot, urls)
+        i += 1
 
     print(urls)
     myrdd = sc.parallelize([urls])
