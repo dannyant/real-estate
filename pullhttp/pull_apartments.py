@@ -17,11 +17,11 @@ def pull_sitemap_xml(sitemap, url_list):
     properties_zip_url = raw_robots["sitemapindex"]["sitemap"]
     print("DIcT TYPE = " + str(dict))
     if isinstance(properties_zip_url, dict):
-        print("DICT = " + str(dict))
+        print("DICT = " + str(properties_zip_url))
         properties_zip_url = [properties_zip_url]
     else:
         print(isinstance(properties_zip_url, dict))
-        print("NOT DICT = " + type(properties_zip_url))
+        print("NOT DICT = " + str(type(properties_zip_url)))
 
     for prop_url_dict in properties_zip_url:
         print("ZIP URL = " + str(prop_url_dict))
