@@ -55,7 +55,7 @@ def main():
     myrdd = sc.parallelize([urls])
     df = spark.createDataFrame(data=myrdd)
 
-    df.write.format("jdbc").option("driver","com.mysql.cj.jdbc.Driver")\
+    df.write.format("jdbc")\
         .option("url", "jdbc:mysql://dannymain:3306/realestate")\
         .option("dbtable", "apartments_property").option("user", "realestate")\
         .option("password", "password").save()
