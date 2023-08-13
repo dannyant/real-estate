@@ -9,14 +9,22 @@ from base_http_pull import pull_http
 
 
 def pull_sitemap_xml(sitemap, url_list):
+    print("Sitemap Processing " + str(sitemap))
     robots = pull_http(sitemap.strip(), as_text=False)
     robots_unzipped = gzip.decompress(robots).decode('utf-8')
+    print("RAW RETURN " + str(robots_unzipped))
     raw_robots = xmltodict.parse(robots_unzipped)
     properties_zip_url = raw_robots["sitemapindex"]["sitemap"]
+    print("DIcT TYPE = " + str(dict))
     if isinstance(properties_zip_url, dict):
+        print("DICT = " + str(properties_zip_url))
         properties_zip_url = [properties_zip_url]
+    else:
+        print(isinstance(properties_zip_url, dict))
+        print("NOT DICT = " + str(type(properties_zip_url)))
 
     for prop_url_dict in properties_zip_url:
+        print("ZIP URL = " + str(prop_url_dict))
         loc_url = prop_url_dict["loc"]
         properties_zipped = pull_http(loc_url, as_text=False)
         properties_unzipped = gzip.decompress(properties_zipped).decode('utf-8')
@@ -37,10 +45,10 @@ def main():
     robots_url = p.findall(robots)
     urls = []
     for robot in robots_url:
-        if ".gz" not in robots:
-            continue
-        pull_sitemap_xml(robot, urls)
+        if ".gz" in robots:
+            pull_sitemap_xml(robot, urls)
 
+    print(urls)
     myrdd = sc.parallelize([urls])
     df = spark.createDataFrame(data=myrdd, schema = schema)
 
