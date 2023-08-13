@@ -2,8 +2,13 @@
 import gzip
 import re
 
+import pandas
+import pymysql as pymysql
 import xmltodict as xmltodict
-from pyspark.shell import sc, spark
+from pyspark.shell import sql
+
+#from pyspark.shell import sql
+
 
 from base_http_pull import pull_http
 
@@ -38,13 +43,25 @@ def main():
     p = re.compile('Sitemap: (.*)')
     robots_url = p.findall(robots)
     urls = []
-    for robot in robots_url:
-        if ".gz" not in robots:
-            continue
-        pull_sitemap_xml(robot, urls)
+    pull_sitemap_xml(robots_url[0], urls)
+    #for robot in robots_url:
+    #    if ".gz" not in robots:
+    #        continue
+    #    pull_sitemap_xml(robot, urls)
 
-    myrdd = sc.parallelize([urls])
-    df = spark.createDataFrame(data=myrdd, schema = schema)
+    #myrdd = sc.parallelize([urls])
+    #df = spark.createDataFrame(data=myrdd, schema = schema)
+    df = pandas.DataFrame(urls)
+
+    conn = pymysql.connect(host="dannymain",
+                           port=3306,
+                           user="realestate",
+                           passwd="password",
+                           db="realestate",
+                           charset='utf8')
+
+    sql.write_frame(df, con=conn, name='apartments_property',
+                    if_exists='replace', flavor='mysql')
 
     df.write.format("kafka")\
         .option("kafka.bootstrap.servers", "dannymain:9092")\
