@@ -4,28 +4,35 @@ import re
 
 import xmltodict as xmltodict
 from pyspark.shell import sc, spark
+from pyspark.sql.types import StructType, StructField, StringType
 
 from base_http_pull import pull_http
 
-spark.conf.set("spark.sql.debug.maxToStringFields", 1000)
+import org.apache.spark.SparkContext
+import org.apache.spark.sql.SQLContext
+import org.apache.phoenix.spark._
+
+
+#https://stackoverflow.com/questions/16476413/how-to-insert-pandas-dataframe-via-mysqldb-into-database
+
+schema = StructType([
+    StructField("url", StringType()),
+    StructField("site_last_mod", StringType())
+])
+
+
+
 
 def pull_sitemap_xml(sitemap, url_list):
-    print("Sitemap Processing " + str(sitemap))
     robots = pull_http(sitemap.strip(), as_text=False)
+    print(sitemap.strip())
     robots_unzipped = gzip.decompress(robots).decode('utf-8')
-    print("RAW RETURN " + str(robots_unzipped))
     raw_robots = xmltodict.parse(robots_unzipped)
     properties_zip_url = raw_robots["sitemapindex"]["sitemap"]
-    print("DIcT TYPE = " + str(dict))
     if isinstance(properties_zip_url, dict):
-        print("DICT = " + str(properties_zip_url))
         properties_zip_url = [properties_zip_url]
-    else:
-        print(isinstance(properties_zip_url, dict))
-        print("NOT DICT = " + str(type(properties_zip_url)))
 
     for prop_url_dict in properties_zip_url:
-        print("ZIP URL = " + str(prop_url_dict))
         loc_url = prop_url_dict["loc"]
         properties_zipped = pull_http(loc_url, as_text=False)
         properties_unzipped = gzip.decompress(properties_zipped).decode('utf-8')
@@ -39,6 +46,7 @@ def pull_sitemap_xml(sitemap, url_list):
                 new_dict["last_mod"] = url_dict["lastmod"]
                 url_list.append(new_dict)
 
+
 def main():
     url = "https://www.apartments.com/robots.txt"
     robots = pull_http(url)
@@ -47,16 +55,20 @@ def main():
     urls = []
     i = 0
     for robot in robots_url:
-        if ".gz" in robots and i == 0:
-            pull_sitemap_xml(robot, urls)
+        robot = robot.strip()
+        if ".gz" in robot and "AllNearMe" not in robot and "Profiles.xml.gz" not in robot and "Canada" not in robot and "ProvinceSearches.xml.gz" not in robot:
+            try:
+                pull_sitemap_xml(robot, urls)
+            except:
+                pass
         i += 1
 
-    print(urls)
-    myrdd = sc.parallelize([urls])
-    df = spark.createDataFrame(data=myrdd)
+        myrdd = sc.parallelize([urls])
+        df = spark.createDataFrame(data=myrdd, schema=schema)
+        df.write.format("org.apache.phoenix.spark") \
+          .mode("overwrite") \
+          .option("table", "apartments_property") \
+          .option("zkUrl", "192.168.1.162:2181") \
+          .save()
 
-    df.write.format("jdbc")\
-        .option("url", "jdbc:mysql://dannymain:3306/realestate")\
-        .option("dbtable", "apartments_property").option("user", "realestate")\
-        .option("password", "password").save()
 main()
