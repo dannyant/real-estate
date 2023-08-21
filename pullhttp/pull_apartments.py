@@ -1,6 +1,7 @@
 #!/usr/bin/python3.6
 import gzip
 import re
+import traceback
 
 import xmltodict as xmltodict
 from pyspark.shell import sc, spark
@@ -61,8 +62,8 @@ def main():
                     .option("table", "apartments_property") \
                     .option("zkUrl", "192.168.1.162:2181") \
                     .save()
-            except:
-                pass
+            except Exception as ex:
+                traceback.print_exc()
         i += 1
 
 
