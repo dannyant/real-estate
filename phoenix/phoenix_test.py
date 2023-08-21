@@ -1,7 +1,7 @@
 import phoenixdb
 import phoenixdb.cursor
 
-database_url = 'http://dannymain:8765/'
+database_url = 'http://192.168.1.162:8765/'
 conn = phoenixdb.connect(database_url, autocommit=True)
 
 cursor = conn.cursor()

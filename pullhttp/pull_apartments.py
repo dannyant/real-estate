@@ -8,10 +8,6 @@ from pyspark.sql.types import StructType, StructField, StringType
 
 from base_http_pull import pull_http
 
-import org.apache.spark.SparkContext
-import org.apache.spark.sql.SQLContext
-import org.apache.phoenix.spark._
-
 
 #https://stackoverflow.com/questions/16476413/how-to-insert-pandas-dataframe-via-mysqldb-into-database
 
