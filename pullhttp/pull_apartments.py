@@ -48,23 +48,22 @@ def main():
     robots = pull_http(url)
     p = re.compile('Sitemap: (.*)')
     robots_url = p.findall(robots)
-    urls = []
     i = 0
     for robot in robots_url:
         robot = robot.strip()
         if ".gz" in robot and "AllNearMe" not in robot and "Profiles.xml.gz" not in robot and "Canada" not in robot and "ProvinceSearches.xml.gz" not in robot:
             try:
+                urls = []
                 pull_sitemap_xml(robot, urls)
+                df = spark.createDataFrame(data=urls, schema=schema)
+                df.write.format("org.apache.phoenix.spark") \
+                    .mode("overwrite") \
+                    .option("table", "apartments_property") \
+                    .option("zkUrl", "192.168.1.162:2181") \
+                    .save()
             except:
                 pass
         i += 1
 
-        myrdd = sc.parallelize([urls])
-        df = spark.createDataFrame(data=myrdd, schema=schema)
-        df.write.format("org.apache.phoenix.spark") \
-          .mode("overwrite") \
-          .option("table", "apartments_property") \
-          .option("zkUrl", "192.168.1.162:2181") \
-          .save()
 
 main()
