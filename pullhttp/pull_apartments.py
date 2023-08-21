@@ -63,6 +63,7 @@ def main():
                     .option("zkUrl", "192.168.1.162:2181") \
                     .save()
             except Exception as ex:
+                print(ex)
                 traceback.print_exc()
         i += 1
 
