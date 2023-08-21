@@ -61,7 +61,7 @@ def main():
 
         myrdd = sc.parallelize([urls])
         df = spark.createDataFrame(data=myrdd, schema=schema)
-        df.write.format("phoenix") \
+        df.write.format("org.apache.phoenix.spark") \
           .mode("overwrite") \
           .option("table", "apartments_property") \
           .option("zkUrl", "192.168.1.162:2181") \
