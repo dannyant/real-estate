@@ -118,7 +118,6 @@ def process_dir(dir):
         df.columns = columns
         df[source_month] = assessment_month
         df['USE_CODE_DESC'] = df.apply(lambda x: get_use_code_type(x['USE_CODE']), axis=1)
-        df = df['USE_CODE_DESC'] == "COMMERCIAL_RESIDENTIAL"
         return df
 
 
@@ -136,5 +135,10 @@ NOV_17_DATA = "/Users/dantonetti/soloprojects/real-estate/rolls/nov2017"
 nov_df = process_dir(NOV_17_DATA)
 nov_df.to_csv("/Users/dantonetti/soloprojects/real-estate/rolls_nov2017.csv")
 
-outerjoin = pandas.merge(aug_df, may_df, on='APN_SHORT', how='outer')
-print(outerjoin)
+union = pandas.concat([aug_df, may_df, nov_df])
+group_apn = union.groupby(['APN_LONG'])
+
+from pyspark.sql import SparkSession
+spark = SparkSession.builder.getOrCreate()
+df = spark.read.csv("hdfs://namenode:8020/data/apartments/alameda/rolls")
+df.show(5)
