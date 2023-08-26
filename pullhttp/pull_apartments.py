@@ -1,4 +1,5 @@
 #!/usr/bin/python3.6
+from datetime import datetime
 import gzip
 import re
 import traceback
@@ -10,7 +11,6 @@ from pyspark.sql.types import StructType, StructField, StringType
 from base_http_pull import pull_http
 
 
-#https://stackoverflow.com/questions/16476413/how-to-insert-pandas-dataframe-via-mysqldb-into-database
 
 schema = StructType([
     StructField("url", StringType()),
@@ -40,7 +40,9 @@ def pull_sitemap_xml(sitemap, url_list):
             for url_dict in urls:
                 new_dict = {}
                 new_dict["url"] = url_dict["loc"]
-                new_dict["site_last_mod"] = url_dict["lastmod"]
+                last_mod = url_dict["lastmod"]
+                datetime_object = datetime.strptime(last_mod, '%Y-%m-%dT%H:%M:%S.%fZ')
+                new_dict["site_last_mod"] = datetime_object
                 url_list.append(new_dict)
 
 
