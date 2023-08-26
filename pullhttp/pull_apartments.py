@@ -6,7 +6,6 @@ import traceback
 import xmltodict as xmltodict
 from pyspark.shell import sc, spark
 from pyspark.sql.types import StructType, StructField, StringType
-from pyspark import SparkContext
 
 from base_http_pull import pull_http
 
