@@ -9,6 +9,7 @@ import urllib.request
 def download_url_content(url):
     try:
         response = urllib.request.urlopen(url)
+        print("response = " + str(len(response)))
         return response.read().decode('utf-8')  # Assuming UTF-8 encoding
     except Exception as e:
         print(f"""{e}, quitting""")
@@ -24,6 +25,7 @@ def main():
     download_udf = udf(download_url_content, StringType())
     # Add a new column with downloaded content
     df_with_content = df.withColumn("html_content", download_udf(df["url"]))
+    df_with_content = df_with_content.limit(10)
     # Show the DataFrame with downloaded content
     df_with_content.show(truncate=False)
 
