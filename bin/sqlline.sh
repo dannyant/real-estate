@@ -1,0 +1,1 @@
+/usr/bin/phoenix-sqlline namenode:2181

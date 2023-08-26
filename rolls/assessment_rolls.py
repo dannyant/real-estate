@@ -5,6 +5,7 @@ import pandas
 
 import docx2txt
 import pandas as pandas
+from pyspark.sql.types import StructType, StructField, StringType
 
 column_translations = {
     "Assessor's Parcel Number (APN) sort format": "APN_LONG",
@@ -47,6 +48,50 @@ column_translations = {
     "Economic unit flag 'Y' if APN is part of an economic unit": "ECON_UNIT_FLAG",
     "End date (CCYYMMDD) Date APN was inactivated Blank if APN is active": "APN_INACTIVE_DATE"
 }
+
+schema = StructType([
+    StructField("APN_LONG", StringType()),
+    StructField("APN_SHORT", StringType()),
+    StructField("PRI_TRA", StringType()),
+    StructField("SEC_TRA", StringType()),
+    StructField("ADDRESS_STREET_NUM", StringType()),
+    StructField("ADDRESS_STREET_NAME", StringType()),
+    StructField("ADDRESS_UNIT_NUM", StringType()),
+    StructField("ADDRESS_CITY", StringType()),
+    StructField("ADDRESS_ZIP", StringType()),
+    StructField("ADDRESS_ZIP_EXTENSION", StringType()),
+    StructField("TAXES_LAND_VALUE", StringType()),
+    StructField("TAXES_IMPROVEMENT_VALUE", StringType()),
+    StructField("CLCA_LAND_VALUE", StringType()),
+    StructField("CLCA_IMPROVEMENT_VALUE", StringType()),
+    StructField("FIXTURES_VALUE", StringType()),
+    StructField("PERSONAL_PROPERTY_VALUE", StringType()),
+    StructField("HPP_VALUE", StringType()),
+    StructField("HOMEOWNERS_EXEMPTION_VALUE", StringType()),
+    StructField("OTHER_EXEMPTION_VALUE", StringType()),
+    StructField("NET_TOTAL_VALUE", StringType()),
+    StructField("LAST_DOC_PREFIX", StringType()),
+    StructField("LAST_DOC_SERIES", StringType()),
+    StructField("LAST_DOC_DATE", StringType()),
+    StructField("LAST_DOC_INPUT_DATE", StringType()),
+    StructField("OWNER_NAME", StringType()),
+    StructField("MA_CARE_OF", StringType()),
+    StructField("MA_ATTN_NAME", StringType()),
+    StructField("MA_STREE_ADDRESS", StringType()),
+    StructField("MA_UNIT_NUMBER", StringType()),
+    StructField("MA_CITY_STATE", StringType()),
+    StructField("MA_ZIP_CODE", StringType()),
+    StructField("MA_ZIP_CODE_EXTENSION", StringType()),
+    StructField("MA_BARECODE_WALK_SEQ", StringType()),
+    StructField("MA_BARCODE_CHECK_DIGIT", StringType()),
+    StructField("MA_EFFECTIVE_DATE", StringType()),
+    StructField("MA_SOURCE_CODE", StringType()),
+    StructField("USE_CODE", StringType()),
+    StructField("ECON_UNIT_FLAG", StringType()),
+    StructField("APN_INACTIVE_DATE", StringType())
+])
+
+
 
 
 def read_dataframe(filename, columns):
@@ -140,5 +185,8 @@ group_apn = union.groupby(['APN_LONG'])
 
 from pyspark.sql import SparkSession
 spark = SparkSession.builder.getOrCreate()
-df = spark.read.csv("hdfs://namenode:8020/data/apartments/alameda/rolls")
-df.show(5)
+df = spark.read.csv("hdfs://namenode:8020/user/spark/apartments/rolls", sep="\t", schema=schema)
+apndf = df.select("APN_SHORT")
+apndf["SOURCE"] = "ALAMEDA"
+apndf.show(5)
+
