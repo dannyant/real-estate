@@ -40,7 +40,9 @@ def pull_sitemap_xml(sitemap, url_list):
             for url_dict in urls:
                 new_dict = {}
                 new_dict["url"] = url_dict["loc"]
-                last_mod = url_dict["lastmod"].split(".")[0]
+                last_mod = url_dict["lastmod"]
+                print(last_mod)
+                last_mod = last_mod.split(".")[0]
                 datetime_object = datetime.strptime(last_mod, '%Y-%m-%dT%H:%M:%S')
                 new_dict["site_last_mod"] = datetime_object
                 url_list.append(new_dict)
