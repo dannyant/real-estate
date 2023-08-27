@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import udf
 from pyspark.sql.types import StringType
@@ -30,6 +32,7 @@ def main():
 
     print("limit df")
     df_with_content = df.withColumn("html_contents", download_udf(df["url"]))
+    df_with_content = df_with_content.withColumn("last_downloaded", str(datetime.now()))
     # Show the DataFrame with downloaded content
 
     df_with_content.write.format("org.apache.phoenix.spark") \
