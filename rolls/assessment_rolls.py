@@ -87,31 +87,35 @@ schema = StructType([
 ])
 
 
-def get_use_code_type(use_code):
-    if use_code < 1000:
-        return "EXEMPT"
-    elif use_code < 2000:
-        return "RESIDENTIAL_SF"
-    elif use_code < 3000:
-        return "RESIDENTIAL_MF"
-    elif use_code < 4000:
-        return "COMMERCIAL_SHOPPING"
-    elif use_code < 5000:
-        return "INDUSTRIAL"
-    elif use_code < 6000:
-        return "RURAL"
-    elif use_code < 7000:
-        return "INSTITUTIONAL"
-    elif 7300 <= use_code <= 7430:
-        return "COMMERCIAL_CONDO"
-    elif use_code <= 8000:
-        return "COMMERCIAL_RESIDENTIAL"
-    elif use_code <= 9000:
-        return "COMMERCIAL_IMPROVED"
-    elif use_code <= 9000:
-        return "COMMERCIAL_IMPROVED"
-    else:
-        return "COMMERCIAL_MISC"
+def get_use_code_type(use_code_str):
+    try:
+        use_code = int(use_code_str)
+        if use_code < 1000:
+            return "EXEMPT"
+        elif use_code < 2000:
+            return "RESIDENTIAL_SF"
+        elif use_code < 3000:
+            return "RESIDENTIAL_MF"
+        elif use_code < 4000:
+            return "COMMERCIAL_SHOPPING"
+        elif use_code < 5000:
+            return "INDUSTRIAL"
+        elif use_code < 6000:
+            return "RURAL"
+        elif use_code < 7000:
+            return "INSTITUTIONAL"
+        elif 7300 <= use_code <= 7430:
+            return "COMMERCIAL_CONDO"
+        elif use_code <= 8000:
+            return "COMMERCIAL_RESIDENTIAL"
+        elif use_code <= 9000:
+            return "COMMERCIAL_IMPROVED"
+        elif use_code <= 9000:
+            return "COMMERCIAL_IMPROVED"
+        else:
+            return "COMMERCIAL_MISC"
+    except:
+        return "UNKOWN"
 
 
 #AUG_23_DATA = "/Users/dantonetti/soloprojects/real-estate/rolls/aug2023"
