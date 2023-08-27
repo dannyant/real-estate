@@ -168,7 +168,7 @@ def main():
 
     address_df.write.format("org.apache.phoenix.spark") \
         .mode("overwrite") \
-        .option("table", "PARCEL_INFO") \
+        .option("table", "ADDRESS_INFO") \
         .option("zkUrl", "namenode:2181") \
         .save()
 
