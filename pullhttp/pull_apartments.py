@@ -47,6 +47,8 @@ def pull_sitemap_xml(sitemap, url_list):
                 except:
                     print(last_mod)
 
+                last_mod = last_mod.replace("Z", "")
+
                 try:
                     datetime_object = datetime.strptime(last_mod, '%Y-%m-%dT%H:%M:%S')
                     new_dict["site_last_mod"] = str(datetime_object)
