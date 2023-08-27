@@ -6,10 +6,6 @@ from base_http_pull import pull_http
 database_url = 'http://192.168.1.162:8765/'
 conn = phoenixdb.connect(database_url, autocommit=True)
 
-cursor = conn.cursor()
-cursor.execute("SELECT * FROM apartments_property")
-print(cursor.fetchall())
-
 cursor = conn.cursor(cursor_factory=phoenixdb.cursor.DictCursor)
 #cursor.execute("SELECT * FROM apartments_property WHERE last_downloaded is null")
 cursor.execute("SELECT * FROM PARCEL_INFO")

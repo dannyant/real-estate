@@ -140,13 +140,32 @@ trimstr = udf(trim, StringType())
 def main():
     spark = SparkSession.builder.appName("ProcessRolls").getOrCreate()
     df = spark.read.csv("hdfs://namenode:8020/user/spark/apartments/rolls", sep="\t", schema=schema)
-    df = df.select("APN_SHORT").withColumnRenamed("APN_SHORT","PARCEL_ID")
-    df = df.withColumn("COUNTY", alameda_udf())
-    df = df.withColumn("PARCEL_ID", trimstr(df["PARCEL_ID"]))
-    df.write.format("org.apache.phoenix.spark") \
+    df = df.withColumnRenamed("APN_SHORT","PARCEL_ID")\
+        .withColumn("COUNTY", alameda_udf())\
+        .withColumn("PARCEL_ID", trimstr(df["PARCEL_ID"]))
+
+    apn_df = df.select("PARCEL_ID", "COUNTY")
+    apn_df.write.format("org.apache.phoenix.spark") \
         .mode("overwrite") \
         .option("table", "PARCEL_INFO") \
         .option("zkUrl", "namenode:2181") \
         .save()
+
+    address_df = df.select("PARCEL_ID", "COUNTY", "ADDRESS_STREET_NUM", "ADDRESS_STREET_NAME", "ADDRESS_UNIT_NUM",
+                           "ADDRESS_CITY", "ADDRESS_ZIP", "ADDRESS_ZIP_EXTENSION", "USE_CODE")
+    address_df = address_df.withColumnRenamed("APN_SHORT","PARCEL_ID") \
+        .withColumnRenamed("ADDRESS_STREET_NUM", "STREET_NUM") \
+        .withColumnRenamed("ADDRESS_UNIT_NUM", "UNIT_NUM") \
+        .withColumnRenamed("ADDRESS_STREET_NAME", "STREET_NAME") \
+        .withColumnRenamed("ADDRESS_CITY", "CITY") \
+        .withColumnRenamed("ADDRESS_ZIP", "ZIP") \
+        .withColumnRenamed("ADDRESS_ZIP_EXTENSION", "ZIP_EXTENSION")
+    address_df.write.format("org.apache.phoenix.spark") \
+        .mode("overwrite") \
+        .option("table", "PARCEL_INFO") \
+        .option("zkUrl", "namenode:2181") \
+        .save()
+
+
 
 main()
