@@ -3,7 +3,7 @@ from datetime import datetime
 
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import udf
-from pyspark.sql.types import StringType, DateType
+from pyspark.sql.types import StringType
 
 from base_http_pull import pull_http
 

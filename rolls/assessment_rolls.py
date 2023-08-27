@@ -1,10 +1,6 @@
 import os
 from pathlib import Path
 
-import pandas
-
-import docx2txt
-import pandas as pandas
 from pyspark.sql.functions import udf
 from pyspark.sql.types import StructType, StructField, StringType
 from pyspark.sql import SparkSession
