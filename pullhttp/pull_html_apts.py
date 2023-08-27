@@ -10,10 +10,8 @@ from base_http_pull import pull_http
 
 def download_url_content(url):
     try:
-        print("requesting url = " + str(url))
         response = pull_http(url)
-        time.sleep(5)
-        print("response = " + str(len(response)))
+        time.sleep(30)
         return response
     except Exception as e:
         print("BAD URL " + str(url))
@@ -33,7 +31,6 @@ def main():
     download_udf = udf(download_url_content, StringType())
     datetimenow = udf(getdatetimenow, StringType())
     # Add a new column with downloaded content
-    df = df.limit(100)
 
     df_with_content = df.withColumn("html_contents", download_udf(df["url"]))
     df_with_content = df_with_content.withColumn("last_downloaded", datetimenow())
