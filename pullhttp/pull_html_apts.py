@@ -17,21 +17,22 @@ def download_url_content(url):
         print("BAD URL " + str(url))
         return None
 
+def getdatetimenow():
+    return str(datetime.now())
+
+
 def main():
     # Initialize a Spark session
     spark = SparkSession.builder.appName("AptUrlDownload").getOrCreate()
     df = spark.read.format("org.apache.phoenix.spark").option("table", "apartments_property")\
         .option("zkUrl", "namenode:2181").load()
 
-    print("got data")
     # Register UDF to download content
     download_udf = udf(download_url_content, StringType())
-    datetimenow = udf(datetime.now, DateType())
+    datetimenow = udf(getdatetimenow, DateType())
     # Add a new column with downloaded content
-    print("setup udf")
-    df = df.limit(10)
+    df = df.limit(1)
 
-    print("limit df")
     df_with_content = df.withColumn("html_contents", download_udf(df["url"]))
     df_with_content = df_with_content.withColumn("last_downloaded", datetimenow())
     # Show the DataFrame with downloaded content
