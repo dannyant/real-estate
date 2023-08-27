@@ -27,7 +27,7 @@ def pull_taxes(county, data):
 isempty = False
 while not isempty:
     cursor = conn.cursor(cursor_factory=phoenixdb.cursor.DictCursor)
-    cursor.execute("SELECT * FROM tax_info WHERE LAST_DOWNLOADED is null AND USE_TYPE = \"\" limit 100")
+    cursor.execute("SELECT * FROM tax_info WHERE LAST_DOWNLOADED is null limit 100")
     all_parcel_dict = cursor.fetchall()
     isempty = len(all_parcel_dict) == 0
     print("count = " + str(len(all_parcel_dict)))
