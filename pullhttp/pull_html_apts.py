@@ -29,7 +29,7 @@ def main():
 
     # Register UDF to download content
     download_udf = udf(download_url_content, StringType())
-    datetimenow = udf(getdatetimenow, DateType())
+    datetimenow = udf(getdatetimenow, StringType())
     # Add a new column with downloaded content
     df = df.limit(1)
 
