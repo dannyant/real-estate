@@ -1,6 +1,3 @@
-import os
-from pathlib import Path
-
 from pyspark.sql.functions import udf
 from pyspark.sql.types import StructType, StructField, StringType
 from pyspark.sql import SparkSession
@@ -153,3 +150,4 @@ def main():
         .save()
     print("rolls 7")
 
+main()
