@@ -10,6 +10,7 @@ from base_http_pull import pull_http
 
 def download_url_content(url):
     try:
+        print("url" + str(url))
         response = pull_http(url)
         time.sleep(30)
         return response
