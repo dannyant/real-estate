@@ -140,6 +140,7 @@ def upper(val):
 alameda_udf = udf(alameda, StringType())
 trimstr = udf(trim, StringType())
 upperstr = udf(upper, StringType())
+use_code_type = udf(get_use_code_type, StringType())
 
 def main():
     spark = SparkSession.builder.appName("ProcessRolls").getOrCreate()
@@ -169,7 +170,8 @@ def main():
         .withColumnRenamed("ADDRESS_ZIP", "ZIP") \
         .withColumn("ZIP", upperstr(df["ZIP"])) \
         .withColumnRenamed("ADDRESS_ZIP_EXTENSION", "ZIP_EXTENSION") \
-        .withColumn("ZIP_EXTENSION", upperstr(df["ZIP_EXTENSION"]))
+        .withColumn("ZIP_EXTENSION", upperstr(df["ZIP_EXTENSION"])) \
+        .withColumn("USE_TYPE", use_code_type(df["USE_CODE"]))
 
     address_df.write.format("org.apache.phoenix.spark") \
         .mode("overwrite") \
