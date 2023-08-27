@@ -155,21 +155,16 @@ def main():
         .option("zkUrl", "namenode:2181") \
         .save()
 
-    address_df = df.select("PARCEL_ID", "COUNTY", "ADDRESS_STREET_NUM", "ADDRESS_STREET_NAME", "ADDRESS_UNIT_NUM",
-                           "ADDRESS_CITY", "ADDRESS_ZIP", "ADDRESS_ZIP_EXTENSION", "USE_CODE")
-    address_df = address_df.withColumnRenamed("ADDRESS_STREET_NUM", "STREET_NUM") \
-        .withColumn("STREET_NUM", upperstr(df["STREET_NUM"])) \
-        .withColumnRenamed("ADDRESS_UNIT_NUM", "UNIT_NUM") \
-        .withColumn("UNIT_NUM", upperstr(df["UNIT_NUM"])) \
-        .withColumnRenamed("ADDRESS_STREET_NAME", "STREET_NAME") \
-        .withColumn("STREET_NAME", upperstr(df["STREET_NAME"])) \
-        .withColumnRenamed("ADDRESS_CITY", "CITY") \
-        .withColumn("CITY", upperstr(df["CITY"])) \
-        .withColumnRenamed("ADDRESS_ZIP", "ZIP") \
-        .withColumn("ZIP", upperstr(df["ZIP"])) \
-        .withColumnRenamed("ADDRESS_ZIP_EXTENSION", "ZIP_EXTENSION") \
-        .withColumn("ZIP_EXTENSION", upperstr(df["ZIP_EXTENSION"])) \
+    address_df = df.withColumn("STREET_NUM", upperstr(df["ADDRESS_STREET_NUM"])) \
+        .withColumn("UNIT_NUM", upperstr(df["ADDRESS_UNIT_NUM"])) \
+        .withColumn("STREET_NAME", upperstr(df["ADDRESS_STREET_NAME"])) \
+        .withColumn("CITY", upperstr(df["ADDRESS_CITY"])) \
+        .withColumn("ZIP", upperstr(df["ADDRESS_ZIP"])) \
+        .withColumn("ZIP_EXTENSION", upperstr(df["ADDRESS_ZIP_EXTENSION"])) \
         .withColumn("USE_TYPE", use_code_type(df["USE_CODE"]))
+
+    address_df = address_df.select("PARCEL_ID", "COUNTY", "STREET_NUM", "UNIT_NUM", "STREET_NAME",
+                           "ADDRESS_CITY", "ADDRESS_ZIP", "ADDRESS_ZIP_EXTENSION", "USE_CODE")
 
     address_df.write.format("org.apache.phoenix.spark") \
         .mode("overwrite") \
