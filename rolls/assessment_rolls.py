@@ -154,6 +154,7 @@ def main():
         .save()
 
     tax_df = df.select("PARCEL_ID", "COUNTY", "USE_TYPE")
+    tax_df = tax_df.filter("USE_TYPE is 'COMMERCIAL_RESIDENTIAL'")
     tax_df.write.format("org.apache.phoenix.spark") \
         .mode("overwrite") \
         .option("table", "tax_info") \

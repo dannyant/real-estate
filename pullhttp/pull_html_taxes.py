@@ -1,16 +1,9 @@
 import time
-from datetime import datetime
-
-from pyspark.shell import sqlContext
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import udf
 from pyspark.sql.types import StringType
 
 from base_http_pull import pull_http
-
-def getdatetimenow():
-    return str(datetime.now())
-
 
 URL_ALAMEDA = 'https://www.acgov.org/ptax_pub_app/RealSearch.do'
 def pull_alameda_taxes(property_data):
