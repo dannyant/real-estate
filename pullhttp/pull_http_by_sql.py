@@ -8,7 +8,8 @@ conn = phoenixdb.connect(database_url, autocommit=True)
 
 cursor = conn.cursor(cursor_factory=phoenixdb.cursor.DictCursor)
 #cursor.execute("SELECT * FROM apartments_property WHERE last_downloaded is null")
-cursor.execute("SELECT * FROM PARCEL_INFO")
+#cursor.execute("SELECT * FROM PARCEL_INFO")
+cursor.execute("SELECT * FROM tax_info")
 
 all_url_dicts = cursor.fetchall()
 print("count = " + str(len(all_url_dicts)))

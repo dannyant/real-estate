@@ -135,7 +135,16 @@ def main():
     spark = SparkSession.builder.appName("ProcessRolls").getOrCreate()
     df = spark.read.csv("hdfs://namenode:8020/user/spark/apartments/rolls", sep="\t", schema=schema)
     df = df.withColumn("COUNTY", alameda_udf())\
-        .withColumn("PARCEL_ID", trimstr(df["APN_SHORT"]))
+        .withColumn("PARCEL_ID", trimstr(df["APN_SHORT"])) \
+        .withColumn("USE_TYPE", use_code_type(df["USE_CODE"])) \
+        .withColumn("STREET_NUM", upperstr(df["ADDRESS_STREET_NUM"])) \
+        .withColumn("UNIT_NUM", upperstr(df["ADDRESS_UNIT_NUM"])) \
+        .withColumn("STREET_NAME", upperstr(df["ADDRESS_STREET_NAME"])) \
+        .withColumn("CITY", upperstr(df["ADDRESS_CITY"])) \
+        .withColumn("ZIP", upperstr(df["ADDRESS_ZIP"])) \
+        .withColumn("ZIP_EXTENSION", upperstr(df["ADDRESS_ZIP_EXTENSION"])) \
+        .withColumn("USE_TYPE", use_code_type(df["USE_CODE"]))
+
 
     apn_df = df.select("PARCEL_ID", "COUNTY")
     apn_df.write.format("org.apache.phoenix.spark") \
@@ -144,7 +153,8 @@ def main():
         .option("zkUrl", "namenode:2181") \
         .save()
 
-    apn_df.write.format("org.apache.phoenix.spark") \
+    tax_df = df.select("PARCEL_ID", "COUNTY", "USE_TYPE")
+    tax_df.write.format("org.apache.phoenix.spark") \
         .mode("overwrite") \
         .option("table", "tax_info") \
         .option("zkUrl", "namenode:2181") \
