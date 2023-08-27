@@ -134,8 +134,12 @@ def alameda():
 def trim(val):
     return val.strip()
 
+def upper(val):
+    return val.upper().strip()
+
 alameda_udf = udf(alameda, StringType())
 trimstr = udf(trim, StringType())
+upperstr = udf(upper, StringType())
 
 def main():
     spark = SparkSession.builder.appName("ProcessRolls").getOrCreate()
@@ -155,11 +159,18 @@ def main():
                            "ADDRESS_CITY", "ADDRESS_ZIP", "ADDRESS_ZIP_EXTENSION", "USE_CODE")
     address_df = address_df.withColumnRenamed("APN_SHORT","PARCEL_ID") \
         .withColumnRenamed("ADDRESS_STREET_NUM", "STREET_NUM") \
+        .withColumn("STREET_NUM", upperstr(df["STREET_NUM"])) \
         .withColumnRenamed("ADDRESS_UNIT_NUM", "UNIT_NUM") \
+        .withColumn("UNIT_NUM", upperstr(df["UNIT_NUM"])) \
         .withColumnRenamed("ADDRESS_STREET_NAME", "STREET_NAME") \
+        .withColumn("STREET_NAME", upperstr(df["STREET_NAME"])) \
         .withColumnRenamed("ADDRESS_CITY", "CITY") \
+        .withColumn("CITY", upperstr(df["CITY"])) \
         .withColumnRenamed("ADDRESS_ZIP", "ZIP") \
-        .withColumnRenamed("ADDRESS_ZIP_EXTENSION", "ZIP_EXTENSION")
+        .withColumn("ZIP", upperstr(df["ZIP"])) \
+        .withColumnRenamed("ADDRESS_ZIP_EXTENSION", "ZIP_EXTENSION") \
+        .withColumn("ZIP_EXTENSION", upperstr(df["ZIP_EXTENSION"]))
+
     address_df.write.format("org.apache.phoenix.spark") \
         .mode("overwrite") \
         .option("table", "PARCEL_INFO") \
