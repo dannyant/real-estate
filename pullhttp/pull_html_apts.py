@@ -39,6 +39,7 @@ def main():
     df_with_content.write.format("org.apache.phoenix.spark") \
         .mode("overwrite") \
         .option("table", "apartments_property") \
+        .option("maxRecordsPerFile", 100) \
         .option("zkUrl", "namenode:2181") \
         .save()
     print("saved")

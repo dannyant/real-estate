@@ -5,7 +5,9 @@ import pandas
 
 import docx2txt
 import pandas as pandas
+from pyspark.sql.functions import udf
 from pyspark.sql.types import StructType, StructField, StringType
+from pyspark.sql import SparkSession
 
 column_translations = {
     "Assessor's Parcel Number (APN) sort format": "APN_LONG",
@@ -166,27 +168,27 @@ def process_dir(dir):
         return df
 
 
-AUG_23_DATA = "/Users/dantonetti/soloprojects/real-estate/rolls/aug2023"
-aug_df = process_dir(AUG_23_DATA)
-aug_df.to_json("/Users/dantonetti/soloprojects/real-estate/rolls_aug2023.json")
-aug_df.add_prefix("aug23")
+#AUG_23_DATA = "/Users/dantonetti/soloprojects/real-estate/rolls/aug2023"
+#aug_df = process_dir(AUG_23_DATA)
+#aug_df.to_json("/Users/dantonetti/soloprojects/real-estate/rolls_aug2023.json")
+#aug_df.add_prefix("aug23")
+#MAY_22_DATA = "/Users/dantonetti/soloprojects/real-estate/rolls/may2022"
+#may_df = process_dir(MAY_22_DATA)
+#may_df.to_csv("/Users/dantonetti/soloprojects/real-estate/rolls_may2022.csv")
+#may_df.add_prefix("may22")
+#NOV_17_DATA = "/Users/dantonetti/soloprojects/real-estate/rolls/nov2017"
+#nov_df = process_dir(NOV_17_DATA)
+#nov_df.to_csv("/Users/dantonetti/soloprojects/real-estate/rolls_nov2017.csv")
 
-MAY_22_DATA = "/Users/dantonetti/soloprojects/real-estate/rolls/may2022"
-may_df = process_dir(MAY_22_DATA)
-may_df.to_csv("/Users/dantonetti/soloprojects/real-estate/rolls_may2022.csv")
-may_df.add_prefix("may22")
 
-NOV_17_DATA = "/Users/dantonetti/soloprojects/real-estate/rolls/nov2017"
-nov_df = process_dir(NOV_17_DATA)
-nov_df.to_csv("/Users/dantonetti/soloprojects/real-estate/rolls_nov2017.csv")
 
-union = pandas.concat([aug_df, may_df, nov_df])
-group_apn = union.groupby(['APN_LONG'])
+def alameda():
+    return "ALAMEDA"
 
-from pyspark.sql import SparkSession
-spark = SparkSession.builder.getOrCreate()
-df = spark.read.csv("hdfs://namenode:8020/user/spark/apartments/rolls", sep="\t", schema=schema)
-apndf = df.select("APN_SHORT")
-apndf["SOURCE"] = "ALAMEDA"
-apndf.show(5)
+def main():
+    spark = SparkSession.builder.appName("ProcessRolls").getOrCreate()
+    df = spark.read.csv("hdfs://namenode:8020/user/spark/apartments/rolls", sep="\t", schema=schema)
+    df = df.select("APN_SHORT")
+    alameda_udf = udf(alameda, StringType())
+    df = df.withColumn("SOURCE", alameda_udf())
 
