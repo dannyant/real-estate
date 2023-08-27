@@ -90,27 +90,6 @@ schema = StructType([
 ])
 
 
-
-
-def read_dataframe(filename, columns):
-    df = pandas.read_csv(filename, encoding="ISO-8859-1", usecols=columns)
-    print(df)
-
-def parse_doc(doc_file):
-    print(doc_file)
-    text = docx2txt.process(doc_file)
-    print(text)
-    pass
-
-def read_columns(dir):
-    dir_list = os.listdir(dir)
-    for d in dir_list:
-        if "columns" in d.lower():
-            columns_file = dir + "/" + d
-            df = pandas.read_csv(columns_file, encoding="ISO-8859-1")
-            return df.applymap(lambda x: column_translations[x] if x in column_translations else x)
-    return None
-
 def get_use_code_type(use_code):
     if use_code < 1000:
         return "EXEMPT"
@@ -136,32 +115,6 @@ def get_use_code_type(use_code):
         return "COMMERCIAL_IMPROVED"
     else:
         return "COMMERCIAL_MISC"
-
-
-def process_dir(dir):
-    source_month = "SOURCE_MONTH"
-    columns_df = read_columns(dir)
-    columns = []
-    for c in columns_df.values:
-        columns.append(c[0])
-    columns.append(source_month)
-    dir_list = os.listdir(dir)
-    rolls_file = None
-    assessment_month = None
-    for d in dir_list:
-        filename = dir + "/" + d
-        if "IE" in d and d.upper().endswith(".TXT"):
-            rolls_file = filename
-
-            p = Path(d)
-            assessment_month = p.name.lower().replace(".txt", "").replace("ie670-","")
-
-    if rolls_file is not None and columns is not None:
-        df = pandas.read_csv(rolls_file, encoding="ISO-8859-1", header=None, sep="\t")
-        df.columns = columns
-        df[source_month] = assessment_month
-        df['USE_CODE_DESC'] = df.apply(lambda x: get_use_code_type(x['USE_CODE']), axis=1)
-        return df
 
 
 #AUG_23_DATA = "/Users/dantonetti/soloprojects/real-estate/rolls/aug2023"
