@@ -188,7 +188,14 @@ def alameda():
 def main():
     spark = SparkSession.builder.appName("ProcessRolls").getOrCreate()
     df = spark.read.csv("hdfs://namenode:8020/user/spark/apartments/rolls", sep="\t", schema=schema)
-    df = df.select("APN_SHORT")
+    df = df.select("APN_SHORT").withColumnRenamed("APN_SHORT","PARCEL_ID")
     alameda_udf = udf(alameda, StringType())
-    df = df.withColumn("SOURCE", alameda_udf())
+    df = df.withColumn("COUNTY", alameda_udf())
+
+
+    df.write.format("org.apache.phoenix.spark") \
+        .mode("overwrite") \
+        .option("table", "PARCEL_INFO") \
+        .option("zkUrl", "namenode:2181") \
+        .save()
 

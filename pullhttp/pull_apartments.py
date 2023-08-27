@@ -73,7 +73,7 @@ def main():
                 df.write.format("org.apache.phoenix.spark") \
                     .mode("overwrite") \
                     .option("table", "apartments_property") \
-                    .option("zkUrl", "192.168.1.162:2181") \
+                    .option("zkUrl", "namenode:2181") \
                     .save()
             except Exception as ex:
                 print(ex)
