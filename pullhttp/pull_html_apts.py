@@ -27,7 +27,7 @@ def main():
     spark = SparkSession.builder.appName("AptUrlDownload").getOrCreate()
     df = spark.read.format("org.apache.phoenix.spark").option("table", "apartments_property")\
         .option("zkUrl", "namenode:2181").load()
-    df = df.limit(1000)
+    df = df.limit(10)
 
     # Register UDF to download content
     download_udf = udf(download_url_content, StringType())
