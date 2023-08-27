@@ -131,23 +131,22 @@ def get_use_code_type(use_code):
 def alameda():
     return "ALAMEDA"
 
+def trim(val):
+    return val.strip()
+
+alameda_udf = udf(alameda, StringType())
+trimstr = udf(trim, StringType())
+
 def main():
-    print("rolls 1")
     spark = SparkSession.builder.appName("ProcessRolls").getOrCreate()
-    print("rolls 2")
     df = spark.read.csv("hdfs://namenode:8020/user/spark/apartments/rolls", sep="\t", schema=schema)
-    print("rolls 3")
     df = df.select("APN_SHORT").withColumnRenamed("APN_SHORT","PARCEL_ID")
-    print("rolls 4")
-    alameda_udf = udf(alameda, StringType())
-    print("rolls 5")
     df = df.withColumn("COUNTY", alameda_udf())
-    print("rolls 6")
+    df = df.withColumn("PARCEL_ID", trimstr(df["PARCEL_ID"]))
     df.write.format("org.apache.phoenix.spark") \
         .mode("overwrite") \
         .option("table", "PARCEL_INFO") \
         .option("zkUrl", "namenode:2181") \
         .save()
-    print("rolls 7")
 
 main()

@@ -11,7 +11,8 @@ cursor.execute("SELECT * FROM apartments_property")
 print(cursor.fetchall())
 
 cursor = conn.cursor(cursor_factory=phoenixdb.cursor.DictCursor)
-cursor.execute("SELECT * FROM apartments_property WHERE last_downloaded is null")
+#cursor.execute("SELECT * FROM apartments_property WHERE last_downloaded is null")
+cursor.execute("SELECT * FROM PARCEL_INFO")
 
 all_url_dicts = cursor.fetchall()
 print("count = " + str(len(all_url_dicts)))
