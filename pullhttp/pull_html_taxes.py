@@ -1,28 +1,34 @@
 import time
 from datetime import datetime
 
+from pyspark.shell import sqlContext
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import udf
 from pyspark.sql.types import StringType
 
 from base_http_pull import pull_http
 
-
-def download_url_content(url):
-    try:
-        print("url=" + str(url))
-        response = pull_http(url)
-        time.sleep(10)
-        return response
-    except Exception as e:
-        print("BAD URL " + str(url))
-        return None
-
 def getdatetimenow():
     return str(datetime.now())
 
 
-download_udf = udf(download_url_content, StringType())
+URL_ALAMEDA = 'https://www.acgov.org/ptax_pub_app/RealSearch.do'
+def pull_alameda_taxes(property_data):
+  data = {
+    'displayApn': property_data["apn"],
+    'searchBills': 'Search',
+  }
+  property_tax_html = pull_http(URL_ALAMEDA, as_text=True, data=data)
+  return property_tax_html
+
+region_function_mapping = {
+  "Alameda" : pull_alameda_taxes
+}
+
+def pull_taxes(county, data):
+  return region_function_mapping[county](data)
+
+download_udf = udf(pull_taxes, StringType())
 datetimenow = udf(getdatetimenow, StringType())
 
 
@@ -30,8 +36,8 @@ def main():
     isempty = False
     while not isempty:
         # Initialize a Spark session
-        spark = SparkSession.builder.appName("AptUrlDownload").getOrCreate()
-        df = spark.read.format("org.apache.phoenix.spark").option("table", "apartments_property")\
+        spark = SparkSession.builder.appName("TaxDownload").getOrCreate()
+        df = spark.read.format("org.apache.phoenix.spark").option("table", "tax_info")\
             .option("zkUrl", "namenode:2181").load()
         df = df.filter("last_downloaded is NULL")
         df = df.limit(100)

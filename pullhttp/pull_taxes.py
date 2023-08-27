@@ -18,8 +18,8 @@ region_function_mapping = {
   "Alameda" : pull_alameda_taxes
 }
 
-def pull_taxes(property_data):
-  return region_function_mapping[property_data["region"]](property_data)
+def pull_taxes(county, data):
+  return region_function_mapping[county](data)
 
 def main(spark):
   df = spark \
