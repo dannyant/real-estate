@@ -145,9 +145,8 @@ use_code_type = udf(get_use_code_type, StringType())
 def main():
     spark = SparkSession.builder.appName("ProcessRolls").getOrCreate()
     df = spark.read.csv("hdfs://namenode:8020/user/spark/apartments/rolls", sep="\t", schema=schema)
-    df = df.withColumnRenamed("APN_SHORT","PARCEL_ID")\
-        .withColumn("COUNTY", alameda_udf())\
-        .withColumn("PARCEL_ID", trimstr(df["PARCEL_ID"]))
+    df = df.withColumn("COUNTY", alameda_udf())\
+        .withColumn("PARCEL_ID", trimstr(df["APN_SHORT"]))
 
     apn_df = df.select("PARCEL_ID", "COUNTY")
     apn_df.write.format("org.apache.phoenix.spark") \
@@ -158,8 +157,7 @@ def main():
 
     address_df = df.select("PARCEL_ID", "COUNTY", "ADDRESS_STREET_NUM", "ADDRESS_STREET_NAME", "ADDRESS_UNIT_NUM",
                            "ADDRESS_CITY", "ADDRESS_ZIP", "ADDRESS_ZIP_EXTENSION", "USE_CODE")
-    address_df = address_df.withColumnRenamed("APN_SHORT","PARCEL_ID") \
-        .withColumnRenamed("ADDRESS_STREET_NUM", "STREET_NUM") \
+    address_df = address_df.withColumnRenamed("ADDRESS_STREET_NUM", "STREET_NUM") \
         .withColumn("STREET_NUM", upperstr(df["STREET_NUM"])) \
         .withColumnRenamed("ADDRESS_UNIT_NUM", "UNIT_NUM") \
         .withColumn("UNIT_NUM", upperstr(df["UNIT_NUM"])) \
