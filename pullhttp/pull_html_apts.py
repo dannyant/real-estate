@@ -2,7 +2,7 @@ from datetime import datetime
 
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import udf
-from pyspark.sql.types import StringType
+from pyspark.sql.types import StringType, DateType
 
 from base_http_pull import pull_http
 
@@ -26,13 +26,14 @@ def main():
     print("got data")
     # Register UDF to download content
     download_udf = udf(download_url_content, StringType())
+    datetimenow = udf(datetime.now, DateType())
     # Add a new column with downloaded content
     print("setup udf")
     df = df.limit(10)
 
     print("limit df")
     df_with_content = df.withColumn("html_contents", download_udf(df["url"]))
-    df_with_content = df_with_content.withColumn("last_downloaded", str(datetime.now()))
+    df_with_content = df_with_content.withColumn("last_downloaded", datetimenow())
     # Show the DataFrame with downloaded content
 
     df_with_content.write.format("org.apache.phoenix.spark") \
