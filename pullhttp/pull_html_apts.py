@@ -1,11 +1,14 @@
 import time
 from datetime import datetime
 
+from pyspark.shell import sqlContext
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import udf
 from pyspark.sql.types import StringType
 
 from base_http_pull import pull_http
+
+sqlContext.setConf("spark.sql.shuffle.partitions", "100000")
 
 
 def download_url_content(url):
@@ -28,7 +31,6 @@ def main():
     df = spark.read.format("org.apache.phoenix.spark").option("table", "apartments_property")\
         .option("zkUrl", "namenode:2181").load()
     df = df.filter("last_downloaded is NULL")
-    df = df.limit(10)
 
     # Register UDF to download content
     download_udf = udf(download_url_content, StringType())
