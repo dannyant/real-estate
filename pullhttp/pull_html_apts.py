@@ -10,7 +10,7 @@ def download_url_content(url):
         print("requesting url = " + str(url))
         response = pull_http(url)
         print("response = " + str(len(response)))
-        return response.read().decode('utf-8')  # Assuming UTF-8 encoding
+        return response
     except Exception as e:
         print("BAD URL " + str(url))
         return None
