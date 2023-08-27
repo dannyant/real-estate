@@ -1,5 +1,5 @@
 import time
-from datetime import date, datetime
+from datetime import datetime
 
 import phoenixdb.cursor
 from base_http_pull import pull_http
