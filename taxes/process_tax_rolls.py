@@ -1412,8 +1412,20 @@ delinquent_udf = udf(parse_delinquent_tax_bill, StringType())
 
 
 def main():
-    print(parse_current_tax_bill(text))
-    print(parse_delinquent_tax_bill(text))
+    # Initialize a Spark session
+    spark = SparkSession.builder.appName("TaxProcessing").getOrCreate()
+    df = spark.read.format("org.apache.phoenix.spark").option("table", "tax_info") \
+        .option("zkUrl", "namenode:2181").load()
+
+    df = df.filter("LAST_DOWNLOADED is not NULL")\
+        .withColumn("CURRENT_TAX_BILL", current_udf(df["html_contents"])) \
+        .withColumn("DELINQUENT_TAX_BILL", delinquent_udf(df["html_contents"]))
+    df = df.select("PARCEL_ID", "COUNTY", "CURRENT_TAX_BILL", "DELINQUENT_TAX_BILL")
+    df.write.format("org.apache.phoenix.spark") \
+        .mode("overwrite") \
+        .option("table", "TAX_INFO_STATUS") \
+        .option("zkUrl", "namenode:2181") \
+        .save()
 
 
 if __name__ == "__main__":
