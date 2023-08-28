@@ -1391,7 +1391,7 @@ def parse_current_tax_bill(html_content):
         if match is None:
             return None
         else:
-            return match.groups()[0]
+            return float(match.groups()[0].replace(",", ""))
     except:
         return None
 
@@ -1402,7 +1402,7 @@ def parse_delinquent_tax_bill(html_content):
         if match is None:
             return None
         else:
-            return match.groups()[0]
+            return float(match.groups()[0].replace(",", ""))
     except:
         return None
 
