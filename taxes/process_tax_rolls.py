@@ -1416,7 +1416,7 @@ def main():
     df = df.filter("LAST_DOWNLOADED is not NULL")\
         .withColumn("CURRENT_TAX_BILL", current_udf(df["html_contents"])) \
         .withColumn("DELINQUENT_TAX_BILL", delinquent_udf(df["html_contents"]))
-
+    df = df.select("PARCEL_ID", "COUNTY", "CURRENT_TAX_BILL", "DELINQUENT_TAX_BILL")
     df.write.format("org.apache.phoenix.spark") \
         .mode("overwrite") \
         .option("table", "TAX_INFO_STATUS") \
