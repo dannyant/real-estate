@@ -31,7 +31,7 @@ while not isempty:
         cursor.execute("SELECT * FROM tax_info WHERE LAST_DOWNLOADED is null limit 100")
         all_parcel_dict = cursor.fetchall()
         isempty = len(all_parcel_dict) == 0
-        print("count = " + str(len(all_parcel_dict)))
+        print("count = " + str(len(all_parcel_dict)) + " \t " + str(datetime.now()))
         for parcel_dict in all_parcel_dict:
             county = parcel_dict["COUNTY"]
             parcel_id = parcel_dict["PARCEL_ID"]

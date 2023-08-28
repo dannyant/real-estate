@@ -1385,26 +1385,27 @@ current_tax_bill_re = re.compile("DISPLAY CURRENT BILL RESULTS[^$]*\\$([0-9,.]*)
 delinquent_tax_bill_re = re.compile("DISPLAY PRIOR YEAR DELINQUENT TAX INFORMATION[^$]*\\$([0-9,.]*).*DISPLAY TAX HISTORY")
 
 
-def parse_current_tax_bill(html_content):
+def base_parse_tax_bill(regex, html_content):
     try:
-        match = current_tax_bill_re.search(html_content.replace("\n",""))
+        match = regex.search(html_content.replace("\n",""))
         if match is None:
             return None
         else:
-            return float(match.groups()[0].replace(",", ""))
+            return_val = float(match.groups()[0].replace(",", ""))
+            if return_val == 0:
+                return None
+            else:
+                return return_val
     except:
         return None
+
+
+def parse_current_tax_bill(html_content):
+    return base_parse_tax_bill(current_tax_bill_re, html_content)
 
 
 def parse_delinquent_tax_bill(html_content):
-    try:
-        match = delinquent_tax_bill_re.search(html_content.replace("\n",""))
-        if match is None:
-            return None
-        else:
-            return float(match.groups()[0].replace(",", ""))
-    except:
-        return None
+    return base_parse_tax_bill(delinquent_tax_bill_re, html_content)
 
 
 current_udf = udf(parse_current_tax_bill, FloatType())
