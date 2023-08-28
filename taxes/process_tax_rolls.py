@@ -1387,7 +1387,7 @@ delinquent_tax_bill_re = re.compile("DISPLAY PRIOR YEAR DELINQUENT TAX INFORMATI
 
 def parse_current_tax_bill(html_content):
     try:
-        match = current_tax_bill_re.search(html_content.strip())
+        match = current_tax_bill_re.search(html_content.replace("\n",""))
         if match is None:
             return None
         else:
@@ -1398,7 +1398,7 @@ def parse_current_tax_bill(html_content):
 
 def parse_delinquent_tax_bill(html_content):
     try:
-        match = delinquent_tax_bill_re.search(html_content.strip())
+        match = delinquent_tax_bill_re.search(html_content.replace("\n",""))
         if match is None:
             return None
         else:
