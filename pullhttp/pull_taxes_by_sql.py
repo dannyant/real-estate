@@ -27,14 +27,18 @@ def pull_taxes(county, data):
 cursor = conn.cursor(cursor_factory=phoenixdb.cursor.DictCursor)
 isempty = False
 while not isempty:
-    cursor.execute("SELECT * FROM tax_info WHERE LAST_DOWNLOADED is null limit 100")
-    all_parcel_dict = cursor.fetchall()
-    isempty = len(all_parcel_dict) == 0
-    print("count = " + str(len(all_parcel_dict)))
-    for parcel_dict in all_parcel_dict:
-        county = parcel_dict["COUNTY"]
-        parcel_id = parcel_dict["PARCEL_ID"]
-        content = pull_taxes(county, parcel_dict)
-        cursor.execute("UPSERT INTO tax_info (PARCEL_ID, COUNTY, HTML_CONTENTS, LAST_DOWNLOADED) VALUES (?, ?, ?, ?)", (parcel_id, county, content, str(datetime.now())))
-        time.sleep(30)
+    try:
+        cursor.execute("SELECT * FROM tax_info WHERE LAST_DOWNLOADED is null limit 100")
+        all_parcel_dict = cursor.fetchall()
+        isempty = len(all_parcel_dict) == 0
+        print("count = " + str(len(all_parcel_dict)))
+        for parcel_dict in all_parcel_dict:
+            county = parcel_dict["COUNTY"]
+            parcel_id = parcel_dict["PARCEL_ID"]
+            content = pull_taxes(county, parcel_dict)
+            cursor.execute("UPSERT INTO tax_info (PARCEL_ID, COUNTY, HTML_CONTENTS, LAST_DOWNLOADED) VALUES (?, ?, ?, ?)", (parcel_id, county, content, str(datetime.now())))
+            time.sleep(30)
+    except:
+        cursor.close()
+        cursor = conn.cursor(cursor_factory=phoenixdb.cursor.DictCursor)
 
