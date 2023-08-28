@@ -1392,7 +1392,7 @@ def parse_current_tax_bill(html_content):
     if match is None:
         return None
     else:
-        return match.group(1)
+        return match.groups()
 
 
 def parse_delinquent_tax_bill(html_content):
@@ -1400,7 +1400,7 @@ def parse_delinquent_tax_bill(html_content):
     if match is None:
         return None
     else:
-        return match.group(0)
+        return match.groups()
 
 
 current_udf = udf(parse_current_tax_bill, StringType())
