@@ -2,7 +2,7 @@ from pyspark.sql import SparkSession
 import re
 
 from pyspark.sql.functions import udf
-from pyspark.sql.types import StringType
+from pyspark.sql.types import StringType, FloatType
 
 text = """
 
@@ -1407,8 +1407,8 @@ def parse_delinquent_tax_bill(html_content):
         return None
 
 
-current_udf = udf(parse_current_tax_bill, StringType())
-delinquent_udf = udf(parse_delinquent_tax_bill, StringType())
+current_udf = udf(parse_current_tax_bill, FloatType())
+delinquent_udf = udf(parse_delinquent_tax_bill, FloatType())
 
 
 def main():
