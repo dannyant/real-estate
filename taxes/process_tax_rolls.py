@@ -1388,7 +1388,7 @@ delinquent_tax_bill_re = re.compile(
 
 
 def parse_current_tax_bill(html_content):
-    match = current_tax_bill_re.search(html_content)
+    match = current_tax_bill_re.search(html_content.strip())
     if match is None:
         return None
     else:
@@ -1396,7 +1396,7 @@ def parse_current_tax_bill(html_content):
 
 
 def parse_delinquent_tax_bill(html_content):
-    match = delinquent_tax_bill_re.search(html_content)
+    match = delinquent_tax_bill_re.search(html_content.strip())
     if match is None:
         return None
     else:
