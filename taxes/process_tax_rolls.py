@@ -1381,26 +1381,30 @@ function googleTranslateElementInit() {
 </html>
 """
 
-current_tax_bill_re = re.compile(
-    ".*DISPLAY CURRENT BILL RESULTS.*pplresultcontent4[^$]*\\$([0-9,.]*)[^*]*</table>[-*]*")
-delinquent_tax_bill_re = re.compile(
-    ".*DISPLAY PRIOR YEAR DELINQUENT TAX INFORMATION.*pplresultcontent4[^$]*\\$([0-9,.]*)[^*]*</table>[-*]*")
+current_tax_bill_re = re.compile("DISPLAY CURRENT BILL RESULTS[^$]*\\$([0-9,.]*)[^*]*")
+delinquent_tax_bill_re = re.compile("DISPLAY PRIOR YEAR DELINQUENT TAX INFORMATION[^$]*\\$([0-9,.]*)[^*]*")
 
 
 def parse_current_tax_bill(html_content):
-    match = current_tax_bill_re.search(html_content.strip())
-    if match is None:
+    try:
+        match = current_tax_bill_re.search(html_content.strip())
+        if match is None:
+            return None
+        else:
+            return match.groups()
+    except:
         return None
-    else:
-        return match.groups()
 
 
 def parse_delinquent_tax_bill(html_content):
-    match = delinquent_tax_bill_re.search(html_content.strip())
-    if match is None:
+    try:
+        match = delinquent_tax_bill_re.search(html_content.strip())
+        if match is None:
+            return None
+        else:
+            return match.groups()[0]
+    except:
         return None
-    else:
-        return match.groups()
 
 
 current_udf = udf(parse_current_tax_bill, StringType())
@@ -1410,21 +1414,6 @@ delinquent_udf = udf(parse_delinquent_tax_bill, StringType())
 def main():
     print(parse_current_tax_bill(text))
     print(parse_delinquent_tax_bill(text))
-
-    # Initialize a Spark session
-    spark = SparkSession.builder.appName("TaxProcessing").getOrCreate()
-    df = spark.read.format("org.apache.phoenix.spark").option("table", "tax_info") \
-        .option("zkUrl", "namenode:2181").load()
-
-    df = df.filter("LAST_DOWNLOADED is not NULL")\
-        .withColumn("CURRENT_TAX_BILL", current_udf(df["html_contents"])) \
-        .withColumn("DELINQUENT_TAX_BILL", delinquent_udf(df["html_contents"]))
-    df = df.select("PARCEL_ID", "COUNTY", "CURRENT_TAX_BILL", "DELINQUENT_TAX_BILL")
-    df.write.format("org.apache.phoenix.spark") \
-        .mode("overwrite") \
-        .option("table", "TAX_INFO_STATUS") \
-        .option("zkUrl", "namenode:2181") \
-        .save()
 
 
 if __name__ == "__main__":
