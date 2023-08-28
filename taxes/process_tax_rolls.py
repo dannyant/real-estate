@@ -1408,6 +1408,9 @@ delinquent_udf = udf(parse_delinquent_tax_bill, StringType())
 
 
 def main():
+    print(parse_current_tax_bill(text))
+    print(parse_delinquent_tax_bill(text))
+
     # Initialize a Spark session
     spark = SparkSession.builder.appName("TaxProcessing").getOrCreate()
     df = spark.read.format("org.apache.phoenix.spark").option("table", "tax_info") \
