@@ -24,9 +24,9 @@ def pull_taxes(county, data):
   return region_function_mapping[county](data)
 
 
+cursor = conn.cursor(cursor_factory=phoenixdb.cursor.DictCursor)
 isempty = False
 while not isempty:
-    cursor = conn.cursor(cursor_factory=phoenixdb.cursor.DictCursor)
     cursor.execute("SELECT * FROM tax_info WHERE LAST_DOWNLOADED is null limit 100")
     all_parcel_dict = cursor.fetchall()
     isempty = len(all_parcel_dict) == 0
