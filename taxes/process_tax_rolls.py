@@ -1391,7 +1391,7 @@ def parse_current_tax_bill(html_content):
         if match is None:
             return None
         else:
-            return match.groups()
+            return match.groups()[0]
     except:
         return None
 
