@@ -1381,8 +1381,8 @@ function googleTranslateElementInit() {
 </html>
 """
 
-current_tax_bill_re = re.compile("DISPLAY CURRENT BILL RESULTS[^$]*\\$([0-9,.]*)[^*]*")
-delinquent_tax_bill_re = re.compile("DISPLAY PRIOR YEAR DELINQUENT TAX INFORMATION[^$]*\\$([0-9,.]*)[^*]*")
+current_tax_bill_re = re.compile("DISPLAY CURRENT BILL RESULTS[^$]*\\$([0-9,.]*).*DISPLAY PRIOR YEAR DELINQUENT TAX INFORMATION")
+delinquent_tax_bill_re = re.compile("DISPLAY PRIOR YEAR DELINQUENT TAX INFORMATION[^$]*\\$([0-9,.]*).*DISPLAY TAX HISTORY")
 
 
 def parse_current_tax_bill(html_content):
