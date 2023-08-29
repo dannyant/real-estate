@@ -13,7 +13,7 @@ conn = phoenixdb.connect(database_url, autocommit=True)
 BING_SEARCH = 'https://www.bing.com/search?q=SEARCHTERM+site%3Aapartments.com'
 #10582+Topanga+Dr%2C+Oakland
 
-apartment_url_re = re.compile("(https.*www.apartments.com.*\")")
+apartment_url_re = re.compile("(https://www.apartments.com[^\"]*)\"")
 
 cursor = conn.cursor(cursor_factory=phoenixdb.cursor.DictCursor)
 isempty = False
@@ -32,17 +32,27 @@ while not isempty:
                 street_name = parcel_dict["STREET_NAME"]
                 street_number = parcel_dict["STREET_NUMBER"]
                 zipcode = parcel_dict["ZIPCODE"]
-                query = street_number + " " + street_name + " " + city + " " + zipcode
-                query = query.replace(" ", "+")
-                url = BING_SEARCH.replace("SEARCHTERM", query)
-                html_content = pull_http(url)
-                matches = apartment_url_re.search(html_content)
-                groups = matches.groups()
-                url = groups[0]
+                if street_number is None:
+                    url = None
+                else:
+                    query = street_number + " " + street_name + " " + city + " " + zipcode
+                    query = query.replace(" ", "+")
+                    url = BING_SEARCH.replace("SEARCHTERM", query)
+                    html_content = pull_http(url)
+                    matches = apartment_url_re.search(html_content)
+                    if matches is None:
+                        url = None
+                    else:
+                        groups = matches.groups()
+                        if groups is None:
+                            url = None
+                        else:
+                            url = groups[0]
             else:
                 url = None
-            cursor.execute("UPSERT INTO ADDRESS_INFO (COUNTY, PARCEL_ID, URL, LAST_DOWNLOADED) VALUES (?, ?, ?, ?)", (parcel_id, county, url, str(datetime.now())))
-            time.sleep(5)
+            cursor.execute("UPSERT INTO ADDRESS_INFO (COUNTY, PARCEL_ID, URL, LAST_DOWNLOADED) VALUES (?, ?, ?, ?)", (county, parcel_id, url, str(datetime.now())))
+            if url is not None:
+                time.sleep(5)
     except Exception as ex:
         print(ex)
         traceback.print_exc()
