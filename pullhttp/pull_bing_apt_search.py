@@ -50,6 +50,8 @@ while not isempty:
                             url = groups[0]
             else:
                 url = None
+            if url is not None and "&" in url:
+                url = None
             cursor.execute("UPSERT INTO ADDRESS_INFO (COUNTY, PARCEL_ID, URL, LAST_DOWNLOADED) VALUES (?, ?, ?, ?)", (county, parcel_id, url, str(datetime.now())))
             if url is not None:
                 time.sleep(5)
