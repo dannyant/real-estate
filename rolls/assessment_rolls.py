@@ -169,7 +169,7 @@ def main():
         .withColumn("ZIP_EXTENSION", upperstr(df["ADDRESS_ZIP_EXTENSION"])) \
         .withColumn("USE_TYPE", use_code_type(df["USE_CODE"]))
 
-    address_df = address_df.select("PARCEL_ID", "COUNTY", "STREET_NUM", "UNIT_NUM", "STREET_NAME",
+    address_df = address_df.select("PARCEL_ID", "COUNTY", "STREET_NUMBER", "UNIT_NUMBER", "STREET_NAME",
                            "CITY", "ZIP", "ZIP_EXTENSION", "USE_CODE", "USE_TYPE")
 
     address_df.write.format("org.apache.phoenix.spark") \
