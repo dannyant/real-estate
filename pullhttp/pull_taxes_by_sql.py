@@ -1,4 +1,5 @@
 import time
+import traceback
 from datetime import datetime
 
 import phoenixdb.cursor
@@ -38,7 +39,9 @@ while not isempty:
             content = pull_taxes(county, parcel_dict)
             cursor.execute("UPSERT INTO tax_info (PARCEL_ID, COUNTY, HTML_CONTENTS, LAST_DOWNLOADED) VALUES (?, ?, ?, ?)", (parcel_id, county, content, str(datetime.now())))
             time.sleep(30)
-    except:
+    except Exception as ex:
+        print(ex)
+        traceback.print_exc()
         cursor.close()
         cursor = conn.cursor(cursor_factory=phoenixdb.cursor.DictCursor)
 
