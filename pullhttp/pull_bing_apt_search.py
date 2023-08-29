@@ -42,7 +42,7 @@ while not isempty:
             else:
                 url = None
             cursor.execute("UPSERT INTO ADDRESS_INFO (COUNTY, PARCEL_ID, URL, LAST_DOWNLOADED) VALUES (?, ?, ?, ?)", (parcel_id, county, url, str(datetime.now())))
-            time.sleep(30)
+            time.sleep(5)
     except Exception as ex:
         print(ex)
         traceback.print_exc()
