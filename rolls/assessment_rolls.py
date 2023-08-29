@@ -161,8 +161,8 @@ def main():
         .option("zkUrl", "namenode:2181") \
         .save()
 
-    address_df = df.withColumn("STREET_NUM", upperstr(df["ADDRESS_STREET_NUM"])) \
-        .withColumn("UNIT_NUM", upperstr(df["ADDRESS_UNIT_NUM"])) \
+    address_df = df.withColumn("STREET_NUMBER", upperstr(df["ADDRESS_STREET_NUM"])) \
+        .withColumn("UNIT_NUMBER", upperstr(df["ADDRESS_UNIT_NUM"])) \
         .withColumn("STREET_NAME", upperstr(df["ADDRESS_STREET_NAME"])) \
         .withColumn("CITY", upperstr(df["ADDRESS_CITY"])) \
         .withColumn("ZIP", upperstr(df["ADDRESS_ZIP"])) \
