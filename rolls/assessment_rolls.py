@@ -165,8 +165,8 @@ def main():
         .withColumn("UNIT_NUMBER", upperstr(df["ADDRESS_UNIT_NUM"])) \
         .withColumn("STREET_NAME", upperstr(df["ADDRESS_STREET_NAME"])) \
         .withColumn("CITY", upperstr(df["ADDRESS_CITY"])) \
-        .withColumn("ZIP", upperstr(df["ADDRESS_ZIP"])) \
-        .withColumn("ZIP_EXTENSION", upperstr(df["ADDRESS_ZIP_EXTENSION"])) \
+        .withColumn("ZIPCODE", upperstr(df["ADDRESS_ZIP"])) \
+        .withColumn("ZIPCODE_EXTENSION", upperstr(df["ADDRESS_ZIP_EXTENSION"])) \
         .withColumn("USE_TYPE", use_code_type(df["USE_CODE"]))
 
     address_df = address_df.select("PARCEL_ID", "COUNTY", "STREET_NUMBER", "UNIT_NUMBER", "STREET_NAME",
