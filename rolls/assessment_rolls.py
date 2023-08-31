@@ -127,18 +127,13 @@ def upper(val):
     return val.upper().strip()
 
 def split_address_get_state(val):
-    index = val.rfind(" ")
-    print("STATE = " + val + " " + str(index))
-    if index > 0:
-        return val[index:]
-    return val
+    split = val.split(" ")
+    return split[-1]
 
 def split_address_get_city(val):
-    index = val.rfind(" ")
-    print("CITY = " + val + " " + str(index))
-    if index > 0:
-        return val[0:index]
-    return val
+    split = val.split(" ")
+    return val.replace(split[-1], "").strip()
+
 
 alameda_udf = udf(alameda, StringType())
 trimstr = udf(trim, StringType())
