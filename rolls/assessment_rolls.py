@@ -128,12 +128,14 @@ def upper(val):
 
 def split_address_get_state(val):
     index = val.rfind(" ")
+    print("STATE = " + val + " " + str(index))
     if index > 0:
         return val[index:]
     return val
 
 def split_address_get_city(val):
     index = val.rfind(" ")
+    print("CITY = " + val + " " + str(index))
     if index > 0:
         return val[0:index]
     return val
