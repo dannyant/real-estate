@@ -198,11 +198,11 @@ def main():
         .withColumn("ZIPCODE", upperstr(df["MA_ZIP_CODE"])) \
         .withColumn("ZIPCODE_EXTENSION", upperstr(df["MA_ZIP_CODE_EXTENSION"])) \
         .withColumn("CARE_OF", upperstr(df["MA_CARE_OF"])) \
-        .withColumn("CITY", split_city(df["CITY_STATE"])) \
-        .withColumn("STATE", split_state(df["CITY_STATE"])) \
+        .withColumn("CITY", split_city(df["MA_CITY_STATE"])) \
+        .withColumn("STATE", split_state(df["MA_CITY_STATE"])) \
         .withColumn("ATTN_NAME", upperstr(df["MA_ATTN_NAME"]))
 
-    owner_df = owner_df.select("OWNER_NAME", "STREET_ADDRESS", "CITY_STATE", "UNIT_NUMBER",
+    owner_df = owner_df.select("OWNER_NAME", "STREET_ADDRESS", "CITY_STATE", "CITY", "STATE", "UNIT_NUMBER",
                          "ZIPCODE", "ZIPCODE_EXTENSION", "CARE_OF", "ATTN_NAME")
 
 
