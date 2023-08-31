@@ -30,7 +30,7 @@ column_translations = {
     "Owner name": "OWNER_NAME",
     "Mailing address (MA) care of name": "MA_CARE_OF",
     "MA attention name": "MA_ATTN_NAME",
-    "MA street address": "MA_STREE_ADDRESS",
+    "MA street address": "MA_STREET_ADDRESS",
     "MA unit number": "MA_UNIT_NUMBER",
     "MA city and state": "MA_CITY_STATE",
     "MA zip code": "MA_ZIP_CODE",
@@ -72,7 +72,7 @@ schema = StructType([
     StructField("OWNER_NAME", StringType()),
     StructField("MA_CARE_OF", StringType()),
     StructField("MA_ATTN_NAME", StringType()),
-    StructField("MA_STREE_ADDRESS", StringType()),
+    StructField("MA_STREET_ADDRESS", StringType()),
     StructField("MA_UNIT_NUMBER", StringType()),
     StructField("MA_CITY_STATE", StringType()),
     StructField("MA_ZIP_CODE", StringType()),
@@ -171,10 +171,27 @@ def main():
 
     address_df = address_df.select("PARCEL_ID", "COUNTY", "STREET_NUMBER", "UNIT_NUMBER", "STREET_NAME",
                            "CITY", "ZIPCODE", "ZIPCODE_EXTENSION", "USE_TYPE")
-
     address_df.write.format("org.apache.phoenix.spark") \
         .mode("overwrite") \
         .option("table", "ADDRESS_INFO") \
+        .option("zkUrl", "namenode:2181") \
+        .save()
+
+    owner_df = df.select("OWNER_NAME", "MA_CARE_OF", "MA_ATTN_NAME", "MA_STREET_ADDRESS",
+                         "MA_UNIT_NUMBER", "MA_CITY_STATE", "MA_ZIP_CODE", "MA_ZIP_CODE_EXTENSION")\
+        .withColumn("OWNER_NAME", upperstr(df["OWNER_NAME"])) \
+        .withColumn("STREET_ADDRESS", upperstr(df["MA_STREET_ADDRESS"])) \
+        .withColumn("CITY_STATE", upperstr(df["MA_CITY_STATE"])) \
+        .withColumn("UNIT_NUMBER", upperstr(df["MA_UNIT_NUMBER"])) \
+        .withColumn("ZIPCODE", upperstr(df["MA_ZIP_CODE"])) \
+        .withColumn("ZIPCODE_EXTENSION", upperstr(df["MA_ZIP_CODE_EXTENSION"])) \
+        .withColumn("CARE_OF", upperstr(df["MA_CARE_OF"])) \
+        .withColumn("ATTN_NAME", upperstr(df["MA_ATTN_NAME"])) \
+        .withColumn("OWNER_INFO_PK", upperstr(df["MA_UNIT_NUMBER"]))
+
+    owner_df.write.format("org.apache.phoenix.spark") \
+        .mode("overwrite") \
+        .option("table", "OWNER_INFO") \
         .option("zkUrl", "namenode:2181") \
         .save()
 
