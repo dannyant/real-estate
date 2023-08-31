@@ -177,9 +177,7 @@ def main():
         .option("zkUrl", "namenode:2181") \
         .save()
 
-    owner_df = df.select("OWNER_NAME", "MA_CARE_OF", "MA_ATTN_NAME", "MA_STREET_ADDRESS",
-                         "MA_UNIT_NUMBER", "MA_CITY_STATE", "MA_ZIP_CODE", "MA_ZIP_CODE_EXTENSION")\
-        .withColumn("OWNER_NAME", upperstr(df["OWNER_NAME"])) \
+    owner_df = df.withColumn("OWNER_NAME", upperstr(df["OWNER_NAME"])) \
         .withColumn("STREET_ADDRESS", upperstr(df["MA_STREET_ADDRESS"])) \
         .withColumn("CITY_STATE", upperstr(df["MA_CITY_STATE"])) \
         .withColumn("UNIT_NUMBER", upperstr(df["MA_UNIT_NUMBER"])) \
@@ -188,6 +186,10 @@ def main():
         .withColumn("CARE_OF", upperstr(df["MA_CARE_OF"])) \
         .withColumn("ATTN_NAME", upperstr(df["MA_ATTN_NAME"])) \
         .withColumn("OWNER_INFO_PK", upperstr(df["MA_UNIT_NUMBER"]))
+
+    owner_df = owner_df.select("OWNER_NAME", "STREET_ADDRESS", "CITY_STATE", "UNIT_NUMBER",
+                         "ZIPCODE", "ZIPCODE_EXTENSION", "CARE_OF", "ATTN_NAME", "OWNER_INFO_PK")
+
 
     owner_df.write.format("org.apache.phoenix.spark") \
         .mode("overwrite") \
