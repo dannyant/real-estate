@@ -127,11 +127,13 @@ def upper(val):
     return val.upper().strip()
 
 def split_address_get_state(val):
+    val = val.strip()
     split = val.split(" ")
     print("State = " + val + " -- " + str(split))
     return split[-1]
 
 def split_address_get_city(val):
+    val = val.strip()
     split = val.split(" ")
     print("City = " + val + " -- " + str(split))
     return val.replace(split[-1], "").strip()
