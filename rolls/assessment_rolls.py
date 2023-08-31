@@ -126,10 +126,24 @@ def trim(val):
 def upper(val):
     return val.upper().strip()
 
+def split_address_get_state(val):
+    index = val.rfind(" ")
+    if index > 0:
+        return val[index:]
+    return val
+
+def split_address_get_city(val):
+    index = val.rfind(" ")
+    if index > 0:
+        return val[0:index]
+    return val
+
 alameda_udf = udf(alameda, StringType())
 trimstr = udf(trim, StringType())
 upperstr = udf(upper, StringType())
 use_code_type = udf(get_use_code_type, StringType())
+split_state = udf(split_address_get_state, StringType())
+split_city = udf(split_address_get_city, StringType())
 
 def main():
     spark = SparkSession.builder.appName("ProcessRolls").getOrCreate()
@@ -184,6 +198,8 @@ def main():
         .withColumn("ZIPCODE", upperstr(df["MA_ZIP_CODE"])) \
         .withColumn("ZIPCODE_EXTENSION", upperstr(df["MA_ZIP_CODE_EXTENSION"])) \
         .withColumn("CARE_OF", upperstr(df["MA_CARE_OF"])) \
+        .withColumn("CITY", split_city(df["CITY_STATE"])) \
+        .withColumn("STATE", split_state(df["CITY_STATE"])) \
         .withColumn("ATTN_NAME", upperstr(df["MA_ATTN_NAME"]))
 
     owner_df = owner_df.select("OWNER_NAME", "STREET_ADDRESS", "CITY_STATE", "UNIT_NUMBER",
