@@ -136,7 +136,8 @@ def split_address_get_city(val):
     val = val.strip()
     split = val.split(" ")
     print("City = " + val + " -- " + str(split))
-    return val.replace(split[-1], "").strip()
+    state = split[-1]
+    return val[0:-len(state)].strip()
 
 
 alameda_udf = udf(alameda, StringType())
