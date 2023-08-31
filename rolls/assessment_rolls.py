@@ -195,7 +195,6 @@ def main():
 
     owner_df = df.withColumn("OWNER_NAME", upperstr(df["OWNER_NAME"])) \
         .withColumn("STREET_ADDRESS", upperstr(df["MA_STREET_ADDRESS"])) \
-        .withColumn("CITY_STATE", upperstr(df["MA_CITY_STATE"])) \
         .withColumn("UNIT_NUMBER", upperstr(df["MA_UNIT_NUMBER"])) \
         .withColumn("ZIPCODE", upperstr(df["MA_ZIP_CODE"])) \
         .withColumn("ZIPCODE_EXTENSION", upperstr(df["MA_ZIP_CODE_EXTENSION"])) \
@@ -204,7 +203,7 @@ def main():
         .withColumn("STATE", split_state(df["MA_CITY_STATE"])) \
         .withColumn("ATTN_NAME", upperstr(df["MA_ATTN_NAME"]))
 
-    owner_df = owner_df.select("OWNER_NAME", "STREET_ADDRESS", "CITY_STATE", "CITY", "STATE", "UNIT_NUMBER",
+    owner_df = owner_df.select("OWNER_NAME", "STREET_ADDRESS", "CITY", "STATE", "UNIT_NUMBER",
                          "ZIPCODE", "ZIPCODE_EXTENSION", "CARE_OF", "ATTN_NAME")
 
 
