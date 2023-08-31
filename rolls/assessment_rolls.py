@@ -184,11 +184,10 @@ def main():
         .withColumn("ZIPCODE", upperstr(df["MA_ZIP_CODE"])) \
         .withColumn("ZIPCODE_EXTENSION", upperstr(df["MA_ZIP_CODE_EXTENSION"])) \
         .withColumn("CARE_OF", upperstr(df["MA_CARE_OF"])) \
-        .withColumn("ATTN_NAME", upperstr(df["MA_ATTN_NAME"])) \
-        .withColumn("OWNER_INFO_PK", upperstr(df["MA_UNIT_NUMBER"]))
+        .withColumn("ATTN_NAME", upperstr(df["MA_ATTN_NAME"]))
 
     owner_df = owner_df.select("OWNER_NAME", "STREET_ADDRESS", "CITY_STATE", "UNIT_NUMBER",
-                         "ZIPCODE", "ZIPCODE_EXTENSION", "CARE_OF", "ATTN_NAME", "OWNER_INFO_PK")
+                         "ZIPCODE", "ZIPCODE_EXTENSION", "CARE_OF", "ATTN_NAME")
 
 
     owner_df.write.format("org.apache.phoenix.spark") \
