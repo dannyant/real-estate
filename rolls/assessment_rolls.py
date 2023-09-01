@@ -145,7 +145,7 @@ def to_int(val):
     try:
         if val is None:
             return None
-        return int(val)
+        return int(val.strip())
     except:
         traceback.print_exc()
         return None
