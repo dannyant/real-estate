@@ -1,7 +1,7 @@
 import traceback
 
 from pyspark.sql.functions import udf
-from pyspark.sql.types import StructType, StructField, StringType, NumericType
+from pyspark.sql.types import StructType, StructField, StringType, NumericType, IntegerType
 from pyspark.sql import SparkSession
 
 column_translations = {
@@ -157,7 +157,7 @@ upperstr = udf(upper, StringType())
 use_code_type = udf(get_use_code_type, StringType())
 split_state = udf(split_address_get_state, StringType())
 split_city = udf(split_address_get_city, StringType())
-to_int_conv = udf(to_int, NumericType())
+to_int_conv = udf(to_int, IntegerType())
 
 def main():
     spark = SparkSession.builder.appName("ProcessRolls").getOrCreate()
