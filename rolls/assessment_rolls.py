@@ -1,5 +1,7 @@
+import traceback
+
 from pyspark.sql.functions import udf
-from pyspark.sql.types import StructType, StructField, StringType
+from pyspark.sql.types import StructType, StructField, StringType, NumericType
 from pyspark.sql import SparkSession
 
 column_translations = {
@@ -139,6 +141,15 @@ def split_address_get_city(val):
     state = split[-1]
     return val[0:-len(state)].strip()
 
+def to_int(val):
+    try:
+        if val is None:
+            return None
+        return int(val)
+    except:
+        traceback.print_exc()
+        return None
+
 
 alameda_udf = udf(alameda, StringType())
 trimstr = udf(trim, StringType())
@@ -146,6 +157,7 @@ upperstr = udf(upper, StringType())
 use_code_type = udf(get_use_code_type, StringType())
 split_state = udf(split_address_get_state, StringType())
 split_city = udf(split_address_get_city, StringType())
+to_int_conv = udf(to_int, NumericType())
 
 def main():
     spark = SparkSession.builder.appName("ProcessRolls").getOrCreate()
@@ -215,6 +227,18 @@ def main():
                          "CLCA_LAND_VALUE", "CLCA_IMPROVEMENT_VALUE", "FIXTURES_VALUE", "PERSONAL_PROPERTY_VALUE",
                          "HPP_VALUE", "HOMEOWNERS_EXEMPTION_VALUE", "OTHER_EXEMPTION_VALUE", "NET_TOTAL_VALUE",
                          "LAST_DOC_PREFIX", "LAST_DOC_SERIES", "LAST_DOC_DATE", "LAST_DOC_INPUT_DATE")
+
+    value_df = value_df.withColumn("TAXES_LAND_VALUE", to_int_conv(df["TAXES_LAND_VALUE"])) \
+        .withColumn("TAXES_IMPROVEMENT_VALUE", to_int_conv(df["TAXES_IMPROVEMENT_VALUE"])) \
+        .withColumn("CLCA_LAND_VALUE", to_int_conv(df["CLCA_LAND_VALUE"])) \
+        .withColumn("CLCA_IMPROVEMENT_VALUE", to_int_conv(df["CLCA_IMPROVEMENT_VALUE"])) \
+        .withColumn("FIXTURES_VALUE", to_int_conv(df["FIXTURES_VALUE"])) \
+        .withColumn("PERSONAL_PROPERTY_VALUE", to_int_conv(df["PERSONAL_PROPERTY_VALUE"])) \
+        .withColumn("HPP_VALUE", to_int_conv(df["HPP_VALUE"])) \
+        .withColumn("HOMEOWNERS_EXEMPTION_VALUE", to_int_conv(df["HOMEOWNERS_EXEMPTION_VALUE"])) \
+        .withColumn("OTHER_EXEMPTION_VALUE", to_int_conv(df["OTHER_EXEMPTION_VALUE"])) \
+        .withColumn("NET_TOTAL_VALUE", to_int_conv(df["NET_TOTAL_VALUE"]))
+
 
     value_df.write.format("org.apache.phoenix.spark") \
         .mode("overwrite") \
