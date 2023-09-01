@@ -19,7 +19,7 @@ cursor = conn.cursor(cursor_factory=phoenixdb.cursor.DictCursor)
 isempty = False
 while not isempty:
     try:
-        cursor.execute("SELECT * FROM ADDRESS_INFO WHERE LAST_DOWNLOADED is null limit 100")
+        cursor.execute("SELECT * FROM ADDRESS_INFO order by LAST_DOWNLOADED limit 100")
         all_parcel_dict = cursor.fetchall()
         isempty = len(all_parcel_dict) == 0
         print("count = " + str(len(all_parcel_dict)) + " \t " + str(datetime.now()))

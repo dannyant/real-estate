@@ -205,14 +205,22 @@ def main():
 
     owner_df = owner_df.select("OWNER_NAME", "STREET_ADDRESS", "CITY", "STATE", "UNIT_NUMBER",
                          "ZIPCODE", "ZIPCODE_EXTENSION", "CARE_OF", "ATTN_NAME")
-
-
     owner_df.write.format("org.apache.phoenix.spark") \
         .mode("overwrite") \
         .option("table", "OWNER_INFO") \
         .option("zkUrl", "namenode:2181") \
         .save()
 
+    value_df = df.select("COUNTY", "PARCEL_ID", "TAXES_LAND_VALUE", "TAXES_IMPROVEMENT_VALUE",
+                         "CLCA_LAND_VALUE", "CLCA_IMPROVEMENT_VALUE", "FIXTURES_VALUE", "PERSONAL_PROPERTY_VALUE"
+                         "HPP_VALUE", "HOMEOWNERS_EXEMPTION_VALUE", "OTHER_EXEMPTION_VALUE", "NET_TOTAL_VALUE",
+                         "LAST_DOC_PREFIX", "LAST_DOC_SERIES", "LAST_DOC_DATE", "LAST_DOC_INPUT_DATE")
+
+    value_df.write.format("org.apache.phoenix.spark") \
+        .mode("overwrite") \
+        .option("table", "VALUE_INFO") \
+        .option("zkUrl", "namenode:2181") \
+        .save()
 
 
 main()
