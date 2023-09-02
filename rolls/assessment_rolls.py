@@ -260,10 +260,11 @@ def main():
         .save()
 
     df = spark.read.csv("hdfs://namenode:8020/user/spark/apartments/rolls/IE670-05-01-22.TXT", sep="\t", schema=schema)
-    df = df.withColumn("COUNTY", alameda_udf()).withColumn("SOURCE_INFO_DATE", literal_may22_udf()) \
+    df = df.withColumn("COUNTY", alameda_udf())\
+        .withColumn("SOURCE_INFO_DATE", literal_may22_udf()) \
         .withColumn("PARCEL_ID", trimstr(df["APN_SHORT"])) \
         .withColumn("USE_TYPE", use_code_type(df["USE_CODE"])) \
-        .withColumn("COUNTY", alameda_udf()).withColumn("SOURCE_INFO_DATE", literal_may22_udf()) \
+        .withColumn("COUNTY", alameda_udf())\
         .withColumn("PARCEL_ID", trimstr(df["APN_SHORT"])) \
         .withColumn("USE_TYPE", use_code_type(df["USE_CODE"])) \
         .withColumn("TAXES_LAND_VALUE", to_int_conv(df["TAXES_LAND_VALUE"])) \
@@ -295,10 +296,11 @@ def main():
         .save()
 
     df = spark.read.csv("hdfs://namenode:8020/user/spark/apartments/rolls/IE670-08-01-23.TXT", sep="\t", schema=schema)
-    df = df.withColumn("COUNTY", alameda_udf()).withColumn("SOURCE_INFO_DATE", literal_aug23_udf()) \
+    df = df.withColumn("COUNTY", alameda_udf())\
+        .withColumn("SOURCE_INFO_DATE", literal_aug23_udf()) \
         .withColumn("PARCEL_ID", trimstr(df["APN_SHORT"])) \
         .withColumn("USE_TYPE", use_code_type(df["USE_CODE"])) \
-        .withColumn("COUNTY", alameda_udf()).withColumn("SOURCE_INFO_DATE", literal_may22_udf()) \
+        .withColumn("COUNTY", alameda_udf())\
         .withColumn("PARCEL_ID", trimstr(df["APN_SHORT"])) \
         .withColumn("USE_TYPE", use_code_type(df["USE_CODE"])) \
         .withColumn("TAXES_LAND_VALUE", to_int_conv(df["TAXES_LAND_VALUE"])) \
@@ -330,10 +332,11 @@ def main():
         .save()
 
     df = spark.read.csv("hdfs://namenode:8020/user/spark/apartments/rolls/IE670-11-01-17.TXT", sep="\t", schema=schema)
-    df = df.withColumn("COUNTY", alameda_udf()).withColumn("SOURCE_INFO_DATE", literal_nov17_udf()) \
+    df = df.withColumn("COUNTY", alameda_udf())\
+        .withColumn("SOURCE_INFO_DATE", literal_nov17_udf()) \
         .withColumn("PARCEL_ID", trimstr(df["APN_SHORT"])) \
         .withColumn("USE_TYPE", use_code_type(df["USE_CODE"])) \
-        .withColumn("COUNTY", alameda_udf()).withColumn("SOURCE_INFO_DATE", literal_may22_udf()) \
+        .withColumn("COUNTY", alameda_udf())\
         .withColumn("PARCEL_ID", trimstr(df["APN_SHORT"])) \
         .withColumn("USE_TYPE", use_code_type(df["USE_CODE"])) \
         .withColumn("TAXES_LAND_VALUE", to_int_conv(df["TAXES_LAND_VALUE"])) \
