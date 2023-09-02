@@ -123,13 +123,13 @@ def alameda():
     return "ALAMEDA"
 
 def literal_nov17():
-    return "11-01-17"
+    return "2017-11-01"
 
 def literal_may22():
-    return "05-01-22"
+    return "2022-05-01"
 
 def literal_aug23():
-    return "08-01-23"
+    return "2023-08-01"
 
 def trim(val):
     return val.strip()
