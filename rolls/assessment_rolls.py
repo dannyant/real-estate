@@ -260,7 +260,12 @@ def main():
         .save()
 
     df = spark.read.csv("hdfs://namenode:8020/user/spark/apartments/rolls/IE670-05-01-22.TXT", sep="\t", schema=schema)
-    df = df.withColumn("COUNTY", alameda_udf()).withColumn("SOURCE_INFO_DATE", literal_may22_udf())
+    df = df.withColumn("COUNTY", alameda_udf()).withColumn("SOURCE_INFO_DATE", literal_may22_udf()) \
+        .withColumn("PARCEL_ID", trimstr(df["APN_SHORT"])) \
+        .withColumn("USE_TYPE", use_code_type(df["USE_CODE"])) \
+
+    df = df.select("COUNTY", "PARCEL_ID", "SOURCE_INFO_DATE", "PRI_TRA", "SEC_TRA", "ADDRESS_STREET_NUM", "ADDRESS_STREET_NAME", "ADDRESS_UNIT_NUM", "ADDRESS_CITY", "ADDRESS_ZIP", "ADDRESS_ZIP_EXTENSION", "TAXES_LAND_VALUE", "TAXES_IMPROVEMENT_VALUE", "CLCA_LAND_VALUE", "CLCA_IMPROVEMENT_VALUE", "FIXTURES_VALUE", "PERSONAL_PROPERTY_VALUE", "HPP_VALUE", "HOMEOWNERS_EXEMPTION_VALUE", "OTHER_EXEMPTION_VALUE", "NET_TOTAL_VALUE", "LAST_DOC_PREFIX", "LAST_DOC_SERIES", "LAST_DOC_DATE", "LAST_DOC_INPUT_DATE", "OWNER_NAME", "MA_CARE_OF", "MA_ATTN_NAME", "MA_STREET_ADDRESS", "MA_UNIT_NUMBER", "MA_CITY_STATE", "MA_ZIP_CODE", "MA_ZIP_CODE_EXTENSION", "MA_BARECODE_WALK_SEQ", "MA_BARCODE_CHECK_DIGIT", "MA_EFFECTIVE_DATE", "MA_SOURCE_CODE", "USE_CODE", "ECON_UNIT_FLAG", "APN_INACTIVE_DATE")
+
     df.write.format("org.apache.phoenix.spark") \
         .mode("overwrite") \
         .option("table", "ROLL_INFO") \
@@ -269,6 +274,7 @@ def main():
 
     df = spark.read.csv("hdfs://namenode:8020/user/spark/apartments/rolls/IE670-08-01-23.TXT", sep="\t", schema=schema)
     df = df.withColumn("COUNTY", alameda_udf()).withColumn("SOURCE_INFO_DATE", literal_aug23_udf())
+    df = df.select("COUNTY", "PARCEL_ID", "SOURCE_INFO_DATE", "PRI_TRA", "SEC_TRA", "ADDRESS_STREET_NUM", "ADDRESS_STREET_NAME", "ADDRESS_UNIT_NUM", "ADDRESS_CITY", "ADDRESS_ZIP", "ADDRESS_ZIP_EXTENSION", "TAXES_LAND_VALUE", "TAXES_IMPROVEMENT_VALUE", "CLCA_LAND_VALUE", "CLCA_IMPROVEMENT_VALUE", "FIXTURES_VALUE", "PERSONAL_PROPERTY_VALUE", "HPP_VALUE", "HOMEOWNERS_EXEMPTION_VALUE", "OTHER_EXEMPTION_VALUE", "NET_TOTAL_VALUE", "LAST_DOC_PREFIX", "LAST_DOC_SERIES", "LAST_DOC_DATE", "LAST_DOC_INPUT_DATE", "OWNER_NAME", "MA_CARE_OF", "MA_ATTN_NAME", "MA_STREET_ADDRESS", "MA_UNIT_NUMBER", "MA_CITY_STATE", "MA_ZIP_CODE", "MA_ZIP_CODE_EXTENSION", "MA_BARECODE_WALK_SEQ", "MA_BARCODE_CHECK_DIGIT", "MA_EFFECTIVE_DATE", "MA_SOURCE_CODE", "USE_CODE", "ECON_UNIT_FLAG", "APN_INACTIVE_DATE")
     df.write.format("org.apache.phoenix.spark") \
         .mode("overwrite") \
         .option("table", "ROLL_INFO") \
@@ -277,6 +283,7 @@ def main():
 
     df = spark.read.csv("hdfs://namenode:8020/user/spark/apartments/rolls/IE670-11-01-17.TXT", sep="\t", schema=schema)
     df = df.withColumn("COUNTY", alameda_udf()).withColumn("SOURCE_INFO_DATE", literal_nov17_udf())
+    df = df.select("COUNTY", "PARCEL_ID", "SOURCE_INFO_DATE", "PRI_TRA", "SEC_TRA", "ADDRESS_STREET_NUM", "ADDRESS_STREET_NAME", "ADDRESS_UNIT_NUM", "ADDRESS_CITY", "ADDRESS_ZIP", "ADDRESS_ZIP_EXTENSION", "TAXES_LAND_VALUE", "TAXES_IMPROVEMENT_VALUE", "CLCA_LAND_VALUE", "CLCA_IMPROVEMENT_VALUE", "FIXTURES_VALUE", "PERSONAL_PROPERTY_VALUE", "HPP_VALUE", "HOMEOWNERS_EXEMPTION_VALUE", "OTHER_EXEMPTION_VALUE", "NET_TOTAL_VALUE", "LAST_DOC_PREFIX", "LAST_DOC_SERIES", "LAST_DOC_DATE", "LAST_DOC_INPUT_DATE", "OWNER_NAME", "MA_CARE_OF", "MA_ATTN_NAME", "MA_STREET_ADDRESS", "MA_UNIT_NUMBER", "MA_CITY_STATE", "MA_ZIP_CODE", "MA_ZIP_CODE_EXTENSION", "MA_BARECODE_WALK_SEQ", "MA_BARCODE_CHECK_DIGIT", "MA_EFFECTIVE_DATE", "MA_SOURCE_CODE", "USE_CODE", "ECON_UNIT_FLAG", "APN_INACTIVE_DATE")
     df.write.format("org.apache.phoenix.spark") \
         .mode("overwrite") \
         .option("table", "ROLL_INFO") \
