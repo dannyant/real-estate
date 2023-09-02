@@ -259,110 +259,43 @@ def main():
         .option("zkUrl", "namenode:2181") \
         .save()
 
-    df = spark.read.csv("hdfs://namenode:8020/user/spark/apartments/rolls/IE670-05-01-22.TXT", sep="\t", schema=schema)
-    df = df.withColumn("COUNTY", alameda_udf())\
-        .withColumn("SOURCE_INFO_DATE", literal_may22_udf()) \
-        .withColumn("PARCEL_ID", trimstr(df["APN_SHORT"])) \
-        .withColumn("USE_TYPE", use_code_type(df["USE_CODE"])) \
-        .withColumn("COUNTY", alameda_udf())\
-        .withColumn("PARCEL_ID", trimstr(df["APN_SHORT"])) \
-        .withColumn("TAXES_LAND_VALUE", to_int_conv(df["TAXES_LAND_VALUE"])) \
-        .withColumn("TAXES_IMPROVEMENT_VALUE", to_int_conv(df["TAXES_IMPROVEMENT_VALUE"])) \
-        .withColumn("CLCA_LAND_VALUE", to_int_conv(df["CLCA_LAND_VALUE"])) \
-        .withColumn("CLCA_IMPROVEMENT_VALUE", to_int_conv(df["CLCA_IMPROVEMENT_VALUE"])) \
-        .withColumn("FIXTURES_VALUE", to_int_conv(df["FIXTURES_VALUE"])) \
-        .withColumn("PERSONAL_PROPERTY_VALUE", to_int_conv(df["PERSONAL_PROPERTY_VALUE"])) \
-        .withColumn("HPP_VALUE", to_int_conv(df["HPP_VALUE"])) \
-        .withColumn("HOMEOWNERS_EXEMPTION_VALUE", to_int_conv(df["HOMEOWNERS_EXEMPTION_VALUE"])) \
-        .withColumn("OTHER_EXEMPTION_VALUE", to_int_conv(df["OTHER_EXEMPTION_VALUE"])) \
-        .withColumn("NET_TOTAL_VALUE", to_int_conv(df["NET_TOTAL_VALUE"]))
+    file_map = {"IE670-11-01-17.TXT" : literal_nov17_udf, "IE670-05-01-22.TXT" : literal_may22_udf, "IE670-08-01-23.TXT" : literal_aug23_udf}
+    for file in ["IE670-11-01-17.TXT", "IE670-05-01-22.TXT", "IE670-08-01-23.TXT"]:
+        loc = "hdfs://namenode:8020/user/spark/apartments/rolls/" + file
+        df = spark.read.csv(loc, sep="\t", schema=schema)
+        df = df.withColumn("COUNTY", alameda_udf())\
+            .withColumn("SOURCE_INFO_DATE", file_map[file]()) \
+            .withColumn("PARCEL_ID", trimstr(df["APN_SHORT"])) \
+            .withColumn("USE_TYPE", use_code_type(df["USE_CODE"])) \
+            .withColumn("COUNTY", alameda_udf())\
+            .withColumn("PARCEL_ID", trimstr(df["APN_SHORT"])) \
+            .withColumn("TAXES_LAND_VALUE", to_int_conv(df["TAXES_LAND_VALUE"])) \
+            .withColumn("TAXES_IMPROVEMENT_VALUE", to_int_conv(df["TAXES_IMPROVEMENT_VALUE"])) \
+            .withColumn("CLCA_LAND_VALUE", to_int_conv(df["CLCA_LAND_VALUE"])) \
+            .withColumn("CLCA_IMPROVEMENT_VALUE", to_int_conv(df["CLCA_IMPROVEMENT_VALUE"])) \
+            .withColumn("FIXTURES_VALUE", to_int_conv(df["FIXTURES_VALUE"])) \
+            .withColumn("PERSONAL_PROPERTY_VALUE", to_int_conv(df["PERSONAL_PROPERTY_VALUE"])) \
+            .withColumn("HPP_VALUE", to_int_conv(df["HPP_VALUE"])) \
+            .withColumn("HOMEOWNERS_EXEMPTION_VALUE", to_int_conv(df["HOMEOWNERS_EXEMPTION_VALUE"])) \
+            .withColumn("OTHER_EXEMPTION_VALUE", to_int_conv(df["OTHER_EXEMPTION_VALUE"])) \
+            .withColumn("NET_TOTAL_VALUE", to_int_conv(df["NET_TOTAL_VALUE"]))
 
 
-    df = df.select("COUNTY", "PARCEL_ID", "USE_TYPE", "SOURCE_INFO_DATE", "PRI_TRA", "SEC_TRA", "ADDRESS_STREET_NUM",
-                   "ADDRESS_STREET_NAME", "ADDRESS_UNIT_NUM", "ADDRESS_CITY", "ADDRESS_ZIP", "ADDRESS_ZIP_EXTENSION",
-                   "TAXES_LAND_VALUE", "TAXES_IMPROVEMENT_VALUE", "CLCA_LAND_VALUE", "CLCA_IMPROVEMENT_VALUE",
-                   "FIXTURES_VALUE", "PERSONAL_PROPERTY_VALUE", "HPP_VALUE", "HOMEOWNERS_EXEMPTION_VALUE",
-                   "OTHER_EXEMPTION_VALUE", "NET_TOTAL_VALUE", "LAST_DOC_PREFIX", "LAST_DOC_SERIES", "LAST_DOC_DATE",
-                   "LAST_DOC_INPUT_DATE", "OWNER_NAME", "MA_CARE_OF", "MA_ATTN_NAME", "MA_STREET_ADDRESS",
-                   "MA_UNIT_NUMBER", "MA_CITY_STATE", "MA_ZIP_CODE", "MA_ZIP_CODE_EXTENSION", "MA_BARECODE_WALK_SEQ",
-                   "MA_BARCODE_CHECK_DIGIT", "MA_EFFECTIVE_DATE", "MA_SOURCE_CODE", "USE_CODE", "ECON_UNIT_FLAG",
-                   "APN_INACTIVE_DATE")
+        df = df.select("COUNTY", "PARCEL_ID", "USE_TYPE", "SOURCE_INFO_DATE", "PRI_TRA", "SEC_TRA", "ADDRESS_STREET_NUM",
+                       "ADDRESS_STREET_NAME", "ADDRESS_UNIT_NUM", "ADDRESS_CITY", "ADDRESS_ZIP", "ADDRESS_ZIP_EXTENSION",
+                        "TAXES_LAND_VALUE", "TAXES_IMPROVEMENT_VALUE", "CLCA_LAND_VALUE", "CLCA_IMPROVEMENT_VALUE",
+                       "FIXTURES_VALUE", "PERSONAL_PROPERTY_VALUE", "HPP_VALUE", "HOMEOWNERS_EXEMPTION_VALUE",
+                       "OTHER_EXEMPTION_VALUE", "NET_TOTAL_VALUE", "LAST_DOC_PREFIX", "LAST_DOC_SERIES", "LAST_DOC_DATE",
+                       "LAST_DOC_INPUT_DATE", "OWNER_NAME", "MA_CARE_OF", "MA_ATTN_NAME", "MA_STREET_ADDRESS",
+                       "MA_UNIT_NUMBER", "MA_CITY_STATE", "MA_ZIP_CODE", "MA_ZIP_CODE_EXTENSION", "MA_BARECODE_WALK_SEQ",
+                       "MA_BARCODE_CHECK_DIGIT", "MA_EFFECTIVE_DATE", "MA_SOURCE_CODE", "USE_CODE", "ECON_UNIT_FLAG",
+                        "APN_INACTIVE_DATE")
 
-    df.write.format("org.apache.phoenix.spark") \
-        .mode("overwrite") \
-        .option("table", "ROLL_INFO") \
-        .option("zkUrl", "namenode:2181") \
-        .save()
-
-    df = spark.read.csv("hdfs://namenode:8020/user/spark/apartments/rolls/IE670-08-01-23.TXT", sep="\t", schema=schema)
-    df = df.withColumn("COUNTY", alameda_udf())\
-        .withColumn("SOURCE_INFO_DATE", literal_aug23_udf()) \
-        .withColumn("PARCEL_ID", trimstr(df["APN_SHORT"])) \
-        .withColumn("USE_TYPE", use_code_type(df["USE_CODE"])) \
-        .withColumn("COUNTY", alameda_udf())\
-        .withColumn("PARCEL_ID", trimstr(df["APN_SHORT"])) \
-        .withColumn("TAXES_LAND_VALUE", to_int_conv(df["TAXES_LAND_VALUE"])) \
-        .withColumn("TAXES_IMPROVEMENT_VALUE", to_int_conv(df["TAXES_IMPROVEMENT_VALUE"])) \
-        .withColumn("CLCA_LAND_VALUE", to_int_conv(df["CLCA_LAND_VALUE"])) \
-        .withColumn("CLCA_IMPROVEMENT_VALUE", to_int_conv(df["CLCA_IMPROVEMENT_VALUE"])) \
-        .withColumn("FIXTURES_VALUE", to_int_conv(df["FIXTURES_VALUE"])) \
-        .withColumn("PERSONAL_PROPERTY_VALUE", to_int_conv(df["PERSONAL_PROPERTY_VALUE"])) \
-        .withColumn("HPP_VALUE", to_int_conv(df["HPP_VALUE"])) \
-        .withColumn("HOMEOWNERS_EXEMPTION_VALUE", to_int_conv(df["HOMEOWNERS_EXEMPTION_VALUE"])) \
-        .withColumn("OTHER_EXEMPTION_VALUE", to_int_conv(df["OTHER_EXEMPTION_VALUE"])) \
-        .withColumn("NET_TOTAL_VALUE", to_int_conv(df["NET_TOTAL_VALUE"]))
-
-
-    df = df.select("COUNTY", "PARCEL_ID", "USE_TYPE", "SOURCE_INFO_DATE", "PRI_TRA", "SEC_TRA", "ADDRESS_STREET_NUM",
-                   "ADDRESS_STREET_NAME", "ADDRESS_UNIT_NUM", "ADDRESS_CITY", "ADDRESS_ZIP", "ADDRESS_ZIP_EXTENSION",
-                   "TAXES_LAND_VALUE", "TAXES_IMPROVEMENT_VALUE", "CLCA_LAND_VALUE", "CLCA_IMPROVEMENT_VALUE",
-                   "FIXTURES_VALUE", "PERSONAL_PROPERTY_VALUE", "HPP_VALUE", "HOMEOWNERS_EXEMPTION_VALUE",
-                   "OTHER_EXEMPTION_VALUE", "NET_TOTAL_VALUE", "LAST_DOC_PREFIX", "LAST_DOC_SERIES", "LAST_DOC_DATE",
-                   "LAST_DOC_INPUT_DATE", "OWNER_NAME", "MA_CARE_OF", "MA_ATTN_NAME", "MA_STREET_ADDRESS",
-                   "MA_UNIT_NUMBER", "MA_CITY_STATE", "MA_ZIP_CODE", "MA_ZIP_CODE_EXTENSION", "MA_BARECODE_WALK_SEQ",
-                   "MA_BARCODE_CHECK_DIGIT", "MA_EFFECTIVE_DATE", "MA_SOURCE_CODE", "USE_CODE", "ECON_UNIT_FLAG",
-                   "APN_INACTIVE_DATE")
-
-    df.write.format("org.apache.phoenix.spark") \
-        .mode("overwrite") \
-        .option("table", "ROLL_INFO") \
-        .option("zkUrl", "namenode:2181") \
-        .save()
-
-    df = spark.read.csv("hdfs://namenode:8020/user/spark/apartments/rolls/IE670-11-01-17.TXT", sep="\t", schema=schema)
-    df = df.withColumn("COUNTY", alameda_udf())\
-        .withColumn("SOURCE_INFO_DATE", literal_nov17_udf()) \
-        .withColumn("PARCEL_ID", trimstr(df["APN_SHORT"])) \
-        .withColumn("USE_TYPE", use_code_type(df["USE_CODE"])) \
-        .withColumn("COUNTY", alameda_udf())\
-        .withColumn("PARCEL_ID", trimstr(df["APN_SHORT"])) \
-        .withColumn("TAXES_LAND_VALUE", to_int_conv(df["TAXES_LAND_VALUE"])) \
-        .withColumn("TAXES_IMPROVEMENT_VALUE", to_int_conv(df["TAXES_IMPROVEMENT_VALUE"])) \
-        .withColumn("CLCA_LAND_VALUE", to_int_conv(df["CLCA_LAND_VALUE"])) \
-        .withColumn("CLCA_IMPROVEMENT_VALUE", to_int_conv(df["CLCA_IMPROVEMENT_VALUE"])) \
-        .withColumn("FIXTURES_VALUE", to_int_conv(df["FIXTURES_VALUE"])) \
-        .withColumn("PERSONAL_PROPERTY_VALUE", to_int_conv(df["PERSONAL_PROPERTY_VALUE"])) \
-        .withColumn("HPP_VALUE", to_int_conv(df["HPP_VALUE"])) \
-        .withColumn("HOMEOWNERS_EXEMPTION_VALUE", to_int_conv(df["HOMEOWNERS_EXEMPTION_VALUE"])) \
-        .withColumn("OTHER_EXEMPTION_VALUE", to_int_conv(df["OTHER_EXEMPTION_VALUE"])) \
-        .withColumn("NET_TOTAL_VALUE", to_int_conv(df["NET_TOTAL_VALUE"]))
-
-    df = df.select("COUNTY", "PARCEL_ID", "USE_TYPE", "SOURCE_INFO_DATE", "PRI_TRA", "SEC_TRA", "ADDRESS_STREET_NUM",
-                   "ADDRESS_STREET_NAME", "ADDRESS_UNIT_NUM", "ADDRESS_CITY", "ADDRESS_ZIP", "ADDRESS_ZIP_EXTENSION",
-                   "TAXES_LAND_VALUE", "TAXES_IMPROVEMENT_VALUE", "CLCA_LAND_VALUE", "CLCA_IMPROVEMENT_VALUE",
-                   "FIXTURES_VALUE", "PERSONAL_PROPERTY_VALUE", "HPP_VALUE", "HOMEOWNERS_EXEMPTION_VALUE",
-                   "OTHER_EXEMPTION_VALUE", "NET_TOTAL_VALUE", "LAST_DOC_PREFIX", "LAST_DOC_SERIES", "LAST_DOC_DATE",
-                   "LAST_DOC_INPUT_DATE", "OWNER_NAME", "MA_CARE_OF", "MA_ATTN_NAME", "MA_STREET_ADDRESS",
-                   "MA_UNIT_NUMBER", "MA_CITY_STATE", "MA_ZIP_CODE", "MA_ZIP_CODE_EXTENSION", "MA_BARECODE_WALK_SEQ",
-                   "MA_BARCODE_CHECK_DIGIT", "MA_EFFECTIVE_DATE", "MA_SOURCE_CODE", "USE_CODE", "ECON_UNIT_FLAG",
-                   "APN_INACTIVE_DATE")
-
-    df.write.format("org.apache.phoenix.spark") \
-        .mode("overwrite") \
-        .option("table", "ROLL_INFO") \
-        .option("zkUrl", "namenode:2181") \
-        .save()
-
+        df.write.format("org.apache.phoenix.spark") \
+                .mode("overwrite") \
+                .option("table", "ROLL_INFO") \
+                .option("zkUrl", "namenode:2181") \
+                .save()
 
 
 main()
