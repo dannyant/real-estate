@@ -122,6 +122,9 @@ def get_use_code_type(use_code_str):
 def alameda():
     return "ALAMEDA"
 
+def literal(val):
+    return val
+
 def trim(val):
     return val.strip()
 
@@ -152,6 +155,8 @@ def to_int(val):
 
 
 alameda_udf = udf(alameda, StringType())
+literal_udf = udf(literal, StringType())
+
 trimstr = udf(trim, StringType())
 upperstr = udf(upper, StringType())
 use_code_type = udf(get_use_code_type, StringType())
@@ -245,6 +250,31 @@ def main():
         .option("table", "VALUE_INFO") \
         .option("zkUrl", "namenode:2181") \
         .save()
+
+    df = spark.read.csv("hdfs://namenode:8020/user/spark/apartments/rolls/IE670-05-01-22.TXT", sep="\t", schema=schema)
+    df = df.withColumn("COUNTY", alameda_udf()).withColumn("SOURCE_INFO_DATE", literal_udf("05-01-22"))
+    df.write.format("org.apache.phoenix.spark") \
+        .mode("overwrite") \
+        .option("table", "ROLL_INFO") \
+        .option("zkUrl", "namenode:2181") \
+        .save()
+
+    df = spark.read.csv("hdfs://namenode:8020/user/spark/apartments/rolls/IE670-08-01-23.TXT", sep="\t", schema=schema)
+    df = df.withColumn("COUNTY", alameda_udf()).withColumn("SOURCE_INFO_DATE", literal_udf("05-01-22"))
+    df.write.format("org.apache.phoenix.spark") \
+        .mode("overwrite") \
+        .option("table", "ROLL_INFO") \
+        .option("zkUrl", "namenode:2181") \
+        .save()
+
+    df = spark.read.csv("hdfs://namenode:8020/user/spark/apartments/rolls/IE670-11-01-17.TXT", sep="\t", schema=schema)
+    df = df.withColumn("COUNTY", alameda_udf()).withColumn("SOURCE_INFO_DATE", literal_udf("05-01-22"))
+    df.write.format("org.apache.phoenix.spark") \
+        .mode("overwrite") \
+        .option("table", "ROLL_INFO") \
+        .option("zkUrl", "namenode:2181") \
+        .save()
+
 
 
 main()
