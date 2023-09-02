@@ -266,7 +266,6 @@ def main():
         .withColumn("USE_TYPE", use_code_type(df["USE_CODE"])) \
         .withColumn("COUNTY", alameda_udf())\
         .withColumn("PARCEL_ID", trimstr(df["APN_SHORT"])) \
-        .withColumn("USE_TYPE", use_code_type(df["USE_CODE"])) \
         .withColumn("TAXES_LAND_VALUE", to_int_conv(df["TAXES_LAND_VALUE"])) \
         .withColumn("TAXES_IMPROVEMENT_VALUE", to_int_conv(df["TAXES_IMPROVEMENT_VALUE"])) \
         .withColumn("CLCA_LAND_VALUE", to_int_conv(df["CLCA_LAND_VALUE"])) \
@@ -302,7 +301,6 @@ def main():
         .withColumn("USE_TYPE", use_code_type(df["USE_CODE"])) \
         .withColumn("COUNTY", alameda_udf())\
         .withColumn("PARCEL_ID", trimstr(df["APN_SHORT"])) \
-        .withColumn("USE_TYPE", use_code_type(df["USE_CODE"])) \
         .withColumn("TAXES_LAND_VALUE", to_int_conv(df["TAXES_LAND_VALUE"])) \
         .withColumn("TAXES_IMPROVEMENT_VALUE", to_int_conv(df["TAXES_IMPROVEMENT_VALUE"])) \
         .withColumn("CLCA_LAND_VALUE", to_int_conv(df["CLCA_LAND_VALUE"])) \
@@ -338,7 +336,6 @@ def main():
         .withColumn("USE_TYPE", use_code_type(df["USE_CODE"])) \
         .withColumn("COUNTY", alameda_udf())\
         .withColumn("PARCEL_ID", trimstr(df["APN_SHORT"])) \
-        .withColumn("USE_TYPE", use_code_type(df["USE_CODE"])) \
         .withColumn("TAXES_LAND_VALUE", to_int_conv(df["TAXES_LAND_VALUE"])) \
         .withColumn("TAXES_IMPROVEMENT_VALUE", to_int_conv(df["TAXES_IMPROVEMENT_VALUE"])) \
         .withColumn("CLCA_LAND_VALUE", to_int_conv(df["CLCA_LAND_VALUE"])) \
@@ -360,7 +357,6 @@ def main():
                    "MA_BARCODE_CHECK_DIGIT", "MA_EFFECTIVE_DATE", "MA_SOURCE_CODE", "USE_CODE", "ECON_UNIT_FLAG",
                    "APN_INACTIVE_DATE")
 
-    df = df.select("COUNTY", "PARCEL_ID", "SOURCE_INFO_DATE", "PRI_TRA", "SEC_TRA", "ADDRESS_STREET_NUM", "ADDRESS_STREET_NAME", "ADDRESS_UNIT_NUM", "ADDRESS_CITY", "ADDRESS_ZIP", "ADDRESS_ZIP_EXTENSION", "TAXES_LAND_VALUE", "TAXES_IMPROVEMENT_VALUE", "CLCA_LAND_VALUE", "CLCA_IMPROVEMENT_VALUE", "FIXTURES_VALUE", "PERSONAL_PROPERTY_VALUE", "HPP_VALUE", "HOMEOWNERS_EXEMPTION_VALUE", "OTHER_EXEMPTION_VALUE", "NET_TOTAL_VALUE", "LAST_DOC_PREFIX", "LAST_DOC_SERIES", "LAST_DOC_DATE", "LAST_DOC_INPUT_DATE", "OWNER_NAME", "MA_CARE_OF", "MA_ATTN_NAME", "MA_STREET_ADDRESS", "MA_UNIT_NUMBER", "MA_CITY_STATE", "MA_ZIP_CODE", "MA_ZIP_CODE_EXTENSION", "MA_BARECODE_WALK_SEQ", "MA_BARCODE_CHECK_DIGIT", "MA_EFFECTIVE_DATE", "MA_SOURCE_CODE", "USE_CODE", "ECON_UNIT_FLAG", "APN_INACTIVE_DATE")
     df.write.format("org.apache.phoenix.spark") \
         .mode("overwrite") \
         .option("table", "ROLL_INFO") \
