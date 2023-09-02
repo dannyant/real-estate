@@ -122,8 +122,14 @@ def get_use_code_type(use_code_str):
 def alameda():
     return "ALAMEDA"
 
-def literal(val):
-    return val
+def literal_nov17():
+    return "11-01-17"
+
+def literal_may22():
+    return "05-01-22"
+
+def literal_aug23():
+    return "08-01-23"
 
 def trim(val):
     return val.strip()
@@ -155,7 +161,9 @@ def to_int(val):
 
 
 alameda_udf = udf(alameda, StringType())
-literal_udf = udf(literal, StringType())
+literal_nov17_udf = udf(literal_nov17, StringType())
+literal_may22_udf = udf(literal_may22, StringType())
+literal_aug23_udf = udf(literal_aug23, StringType())
 
 trimstr = udf(trim, StringType())
 upperstr = udf(upper, StringType())
@@ -252,7 +260,7 @@ def main():
         .save()
 
     df = spark.read.csv("hdfs://namenode:8020/user/spark/apartments/rolls/IE670-05-01-22.TXT", sep="\t", schema=schema)
-    df = df.withColumn("COUNTY", alameda_udf()).withColumn("SOURCE_INFO_DATE", literal_udf("05-01-22"))
+    df = df.withColumn("COUNTY", alameda_udf()).withColumn("SOURCE_INFO_DATE", literal_may22_udf())
     df.write.format("org.apache.phoenix.spark") \
         .mode("overwrite") \
         .option("table", "ROLL_INFO") \
@@ -260,7 +268,7 @@ def main():
         .save()
 
     df = spark.read.csv("hdfs://namenode:8020/user/spark/apartments/rolls/IE670-08-01-23.TXT", sep="\t", schema=schema)
-    df = df.withColumn("COUNTY", alameda_udf()).withColumn("SOURCE_INFO_DATE", literal_udf("05-01-22"))
+    df = df.withColumn("COUNTY", alameda_udf()).withColumn("SOURCE_INFO_DATE", literal_aug23_udf())
     df.write.format("org.apache.phoenix.spark") \
         .mode("overwrite") \
         .option("table", "ROLL_INFO") \
@@ -268,7 +276,7 @@ def main():
         .save()
 
     df = spark.read.csv("hdfs://namenode:8020/user/spark/apartments/rolls/IE670-11-01-17.TXT", sep="\t", schema=schema)
-    df = df.withColumn("COUNTY", alameda_udf()).withColumn("SOURCE_INFO_DATE", literal_udf("05-01-22"))
+    df = df.withColumn("COUNTY", alameda_udf()).withColumn("SOURCE_INFO_DATE", literal_nov17_udf())
     df.write.format("org.apache.phoenix.spark") \
         .mode("overwrite") \
         .option("table", "ROLL_INFO") \
