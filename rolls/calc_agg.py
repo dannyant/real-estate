@@ -9,6 +9,7 @@ def main():
 
     df = df.groupby("COUNTY", "PARCEL_ID")
     df = df.agg(countDistinct('OWNER_NAME'))
+    df.show(4)
     df = df.agg(countDistinct('MA_STREET_ADDRESS'))
     df.show(4)
     df = df.withColumnRenamed("count(OWNER_NAME)", "DISTINCT_OWNERS")
