@@ -4,6 +4,7 @@ from assessment_rolls import use_code_type
 
 def main():
     spark = SparkSession.builder.appName("CalcAgg").getOrCreate()
+    spark.conf.set("spark.sql.files.maxPartitionBytes", 1024 * 1024 * 4)
     df = spark.read.format("org.apache.phoenix.spark").option("table", "ROLL_INFO") \
         .option("zkUrl", "namenode:2181").load()
     df = df.withColumn("USE_TYPE", use_code_type(df["USE_CODE"]))
