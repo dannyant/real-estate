@@ -297,5 +297,13 @@ def main():
                 .option("zkUrl", "namenode:2181") \
                 .save()
 
+        df = spark.read.format("org.apache.phoenix.spark").option("table", "ROLL_INFO") \
+            .option("zkUrl", "namenode:2181").load()
+        df = df.withColumn("USE_TYPE", use_code_type(df["USE_CODE"]))
+
+        df_groupby_parcel = df.groupby("COUNTY", "PARCEL_ID")
+        df_groupby_parcel.show(1)
+
+
 
 main()
