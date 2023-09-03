@@ -289,7 +289,9 @@ def main():
                        "LAST_DOC_INPUT_DATE", "OWNER_NAME", "MA_CARE_OF", "MA_ATTN_NAME", "MA_STREET_ADDRESS",
                        "MA_UNIT_NUMBER", "MA_CITY_STATE", "MA_ZIP_CODE", "MA_ZIP_CODE_EXTENSION", "MA_BARECODE_WALK_SEQ",
                        "MA_BARCODE_CHECK_DIGIT", "MA_EFFECTIVE_DATE", "MA_SOURCE_CODE", "USE_CODE", "ECON_UNIT_FLAG",
-                        "APN_INACTIVE_DATE")
+                        "APN_INACTIVE_DATE")\
+            .withColumn("ADDRESS_STREET_NUM", upperstr(df["ADDRESS_STREET_NUM"]))
+
 
         df.write.format("org.apache.phoenix.spark") \
                 .mode("overwrite") \
@@ -305,7 +307,13 @@ def main():
             .agg(collect_list("USE_TYPE").alias("USE_TYPE_LIST"),
                  collect_list("PRI_TRA").alias("PRI_TRA_LIST"),
                  collect_list("SEC_TRA").alias("SEC_TRA_LIST"),
-                 collect_list("ADDRESS_STREET_NUM").alias("ADDRESS_STREET_NUM_LIST")) \
+                 collect_list("ADDRESS_STREET_NUM").alias("ADDRESS_STREET_NUM_LIST"),
+                 collect_list("ADDRESS_UNIT_NUM").alias("ADDRESS_UNIT_NUM_LIST"),
+                 collect_list("ADDRESS_ZIP_EXTENSION").alias("ADDRESS_ZIP_EXTENSION_LIST"),
+                 collect_list("ADDRESS_ZIP").alias("ADDRESS_ZIP_LIST"),
+                 collect_list("ADDRESS_STREET_NUM").alias("ADDRESS_STREET_NUM_LIST"),
+                 collect_list("ADDRESS_STREET_NAME").alias("ADDRESS_STREET_NAME_LIST")
+                 ) \
             .withColumn("SOURCE_INFO_DATE", file_map[file]())
 
         df_groupby_parcel = df_groupby_parcel\
