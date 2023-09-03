@@ -311,14 +311,21 @@ def main():
                  collect_list("ADDRESS_UNIT_NUM").alias("ADDRESS_UNIT_NUM_LIST"),
                  collect_list("ADDRESS_ZIP_EXTENSION").alias("ADDRESS_ZIP_EXTENSION_LIST"),
                  collect_list("ADDRESS_ZIP").alias("ADDRESS_ZIP_LIST"),
-                 collect_list("ADDRESS_STREET_NUM").alias("ADDRESS_STREET_NUM_LIST"),
+                 collect_list("TAXES_LAND_VALUE").alias("TAXES_LAND_VALUE_LIST"),
+                 collect_list("TAXES_IMPROVEMENT_VALUE").alias("TAXES_IMPROVEMENT_VALUE_LIST"),
+                 collect_list("CLCA_LAND_VALUE").alias("CLCA_LAND_VALUE_LIST"),
+                 collect_list("CLCA_IMPROVEMENT_VALUE").alias("CLCA_IMPROVEMENT_VALUE_LIST"),
+                 collect_list("FIXTURES_VALUE").alias("FIXTURES_VALUE_LIST"),
                  collect_list("ADDRESS_STREET_NAME").alias("ADDRESS_STREET_NAME_LIST")
                  ) \
             .withColumn("SOURCE_INFO_DATE", file_map[file]())
 
         df_groupby_parcel = df_groupby_parcel\
             .select("COUNTY", "PARCEL_ID", "SOURCE_INFO_DATE", "USE_TYPE_LIST", "PRI_TRA_LIST", "SEC_TRA_LIST",
-                    "ADDRESS_STREET_NUM_LIST")
+                    "ADDRESS_STREET_NUM_LIST", "ADDRESS_UNIT_NUM_LIST", "ADDRESS_UNIT_NUM_LIST", "ADDRESS_UNIT_NUM_LIST",
+                    "ADDRESS_ZIP_EXTENSION_LIST", "ADDRESS_ZIP_EXTENSION_LIST", "ADDRESS_ZIP_LIST", "TAXES_LAND_VALUE_LIST",
+                    "TAXES_IMPROVEMENT_VALUE_LIST", "TAXES_IMPROVEMENT_VALUE_LIST", "CLCA_LAND_VALUE_LIST",
+                    "CLCA_IMPROVEMENT_VALUE_LIST", "FIXTURES_VALUE_LIST", "ADDRESS_STREET_NAME_LIST")
 
         df_groupby_parcel.show(10)
 
