@@ -1,6 +1,6 @@
 import traceback
 
-from pyspark.sql.functions import udf
+from pyspark.sql.functions import udf, collect_list
 from pyspark.sql.types import StructType, StructField, StringType, NumericType, IntegerType
 from pyspark.sql import SparkSession
 
@@ -301,7 +301,16 @@ def main():
             .option("zkUrl", "namenode:2181").load()
         df = df.withColumn("USE_TYPE", use_code_type(df["USE_CODE"]))
 
-        df_groupby_parcel = df.groupby("COUNTY", "PARCEL_ID")
+        df_groupby_parcel = df.groupby("COUNTY", "PARCEL_ID") \
+            .agg(collect_list("USE_TYPE_LIST").alias("USE_TYPE")) \
+            .agg(collect_list("PRI_TRA_LIST").alias("PRI_TRA")) \
+            .agg(collect_list("SEC_TRA_LIST").alias("SEC_TRA")) \
+            .agg(collect_list("ADDRESS_STREET_NUM_LIST").alias("ADDRESS_STREET_NUM")) \
+            .withColumn("SOURCE_INFO_DATE", file_map[file]())
+
+        df_groupby_parcel = df_groupby_parcel\
+            .select("COUNTY", "PARCEL_ID", "SOURCE_INFO_DATE", "USE_TYPE_LIST", "PRI_TRA_LIST")
+
         df_groupby_parcel.show(10)
 
 
