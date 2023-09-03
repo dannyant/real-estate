@@ -327,7 +327,7 @@ def main():
                     "TAXES_IMPROVEMENT_VALUE_LIST", "TAXES_IMPROVEMENT_VALUE_LIST", "CLCA_LAND_VALUE_LIST",
                     "CLCA_IMPROVEMENT_VALUE_LIST", "FIXTURES_VALUE_LIST", "ADDRESS_STREET_NAME_LIST")
 
-        df.write.format("org.apache.phoenix.spark") \
+        df_groupby_parcel.write.format("org.apache.phoenix.spark") \
                 .mode("overwrite") \
                 .option("table", "ROLL_INFO_AGG") \
                 .option("zkUrl", "namenode:2181") \
