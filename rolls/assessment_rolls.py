@@ -403,20 +403,20 @@ def main():
                  collect_list("ECON_UNIT_FLAG").alias("ECON_UNIT_FLAG_LIST"),
                  collect_list("APN_INACTIVE_DATE").alias("APN_INACTIVE_DATE_LIST"),
                  collect_list("ADDRESS_STREET_NAME").alias("ADDRESS_STREET_NAME_LIST")
-                 ) \
+                 )
+        df_groupby_parcel = df_groupby_parcel \
             .withColumn("OWNER_NAME_CHANGE", is_owner_change_udf(df["OWNER_NAME_LIST"])) \
             .withColumn("MA_STREET_ADDRESS_CHANGE", is_street_change_udf(df["MA_STREET_ADDRESS_LIST"])) \
             .withColumn("MA_CITY_CHANGE", is_city_change_udf(df["MA_CITY_LIST"])) \
             .withColumn("MA_STATE_CHANGE", is_state_change_udf(df["MA_STATE_LIST"])) \
             .withColumn("SOURCE_INFO_DATE", file_map[file]())
 
-        df_groupby_parcel = df_groupby_parcel\
-            .select("COUNTY", "PARCEL_ID", "SOURCE_INFO_DATE", "USE_TYPE_LIST", "PRI_TRA_LIST", "SEC_TRA_LIST",
-                    "ADDRESS_STREET_NUM_LIST", "ADDRESS_UNIT_NUM_LIST", "ADDRESS_CITY_LIST",
-                    "ADDRESS_ZIP_EXTENSION_LIST", "ADDRESS_ZIP_LIST", "TAXES_LAND_VALUE_LIST",
+        df_groupby_parcel = df_groupby_parcel.select("COUNTY", "PARCEL_ID", "SOURCE_INFO_DATE", "USE_TYPE_LIST",
+                    "PRI_TRA_LIST", "SEC_TRA_LIST", "ADDRESS_STREET_NUM_LIST", "ADDRESS_UNIT_NUM_LIST",
+                    "ADDRESS_CITY_LIST", "ADDRESS_ZIP_EXTENSION_LIST", "ADDRESS_ZIP_LIST", "TAXES_LAND_VALUE_LIST",
                     "TAXES_IMPROVEMENT_VALUE_LIST", "TAXES_IMPROVEMENT_VALUE_LIST", "CLCA_LAND_VALUE_LIST",
                     "CLCA_IMPROVEMENT_VALUE_LIST", "FIXTURES_VALUE_LIST", "ADDRESS_STREET_NAME_LIST",
-                    "PERSONAL_PROPERTY_VALUE_LIST", "HPP_VALUE_LIST", "HOMEOWNERS_EXEMPTION_VALUE_LIST",
+                    "PERSONAL_PROPERTY_VfALUE_LIST", "HPP_VALUE_LIST", "HOMEOWNERS_EXEMPTION_VALUE_LIST",
                     "OTHER_EXEMPTION_VALUE_LIST", "NET_TOTAL_VALUE_LIST", "LAST_DOC_PREFIX_LIST", "LAST_DOC_SERIES_LIST",
                     "LAST_DOC_DATE_LIST", "LAST_DOC_INPUT_DATE_LIST", "OWNER_NAME_LIST", "MA_CARE_OF_LIST",
                     "MA_ATTN_NAME_LIST", "MA_STREET_ADDRESS_LIST", "MA_UNIT_NUMBER_LIST", "MA_CITY_LIST",
