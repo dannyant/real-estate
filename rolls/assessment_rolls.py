@@ -302,10 +302,10 @@ def main():
         df = df.withColumn("USE_TYPE", use_code_type(df["USE_CODE"]))
 
         df_groupby_parcel = df.groupby("COUNTY", "PARCEL_ID") \
-            .agg(collect_list("USE_TYPE").alias("USE_TYPE_LIST")) \
-            .agg(collect_list("PRI_TRA").alias("PRI_TRA_LIST")) \
-            .agg(collect_list("SEC_TRA").alias("SEC_TRA_LIST")) \
-            .agg(collect_list("ADDRESS_STREET_NUM").alias("ADDRESS_STREET_NUM_LIST")) \
+            .agg(collect_list("USE_TYPE").alias("USE_TYPE_LIST"),
+                 collect_list("PRI_TRA").alias("PRI_TRA_LIST"),
+                 collect_list("SEC_TRA").alias("SEC_TRA_LIST"),
+                 collect_list("ADDRESS_STREET_NUM").alias("ADDRESS_STREET_NUM_LIST")) \
             .withColumn("SOURCE_INFO_DATE", file_map[file]())
 
         df_groupby_parcel = df_groupby_parcel\
