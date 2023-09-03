@@ -404,12 +404,6 @@ def main():
                  collect_list("APN_INACTIVE_DATE").alias("APN_INACTIVE_DATE_LIST"),
                  collect_list("ADDRESS_STREET_NAME").alias("ADDRESS_STREET_NAME_LIST")
                  )
-        df_groupby_parcel = df_groupby_parcel \
-            .withColumn("OWNER_NAME_CHANGE", is_owner_change_udf(df["OWNER_NAME_LIST"])) \
-            .withColumn("MA_STREET_ADDRESS_CHANGE", is_street_change_udf(df["MA_STREET_ADDRESS_LIST"])) \
-            .withColumn("MA_CITY_CHANGE", is_city_change_udf(df["MA_CITY_LIST"])) \
-            .withColumn("MA_STATE_CHANGE", is_state_change_udf(df["MA_STATE_LIST"])) \
-            .withColumn("SOURCE_INFO_DATE", file_map[file]())
 
         df_groupby_parcel = df_groupby_parcel.select("COUNTY", "PARCEL_ID", "SOURCE_INFO_DATE", "USE_TYPE_LIST",
                     "PRI_TRA_LIST", "SEC_TRA_LIST", "ADDRESS_STREET_NUM_LIST", "ADDRESS_UNIT_NUM_LIST",
@@ -424,6 +418,13 @@ def main():
                     "MA_BARCODE_CHECK_DIGIT_LIST", "MA_EFFECTIVE_DATE_LIST", "MA_SOURCE_CODE_LIST", "USE_CODE_LIST",
                     "ECON_UNIT_FLAG_LIST", "APN_INACTIVE_DATE_LIST", "OWNER_NAME_CHANGE", "MA_STREET_ADDRESS_CHANGE",
                     "MA_CITY_CHANGE", "MA_STATE_CHANGE")
+
+        df_groupby_parcel = df_groupby_parcel \
+            .withColumn("OWNER_NAME_CHANGE", is_owner_change_udf(df["OWNER_NAME_LIST"])) \
+            .withColumn("MA_STREET_ADDRESS_CHANGE", is_street_change_udf(df["MA_STREET_ADDRESS_LIST"])) \
+            .withColumn("MA_CITY_CHANGE", is_city_change_udf(df["MA_CITY_LIST"])) \
+            .withColumn("MA_STATE_CHANGE", is_state_change_udf(df["MA_STATE_LIST"])) \
+            .withColumn("SOURCE_INFO_DATE", file_map[file]())
 
         df_groupby_parcel.write.format("org.apache.phoenix.spark") \
                 .mode("overwrite") \
