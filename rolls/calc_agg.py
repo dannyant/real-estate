@@ -8,7 +8,7 @@ def main():
         .option("zkUrl", "namenode:2181").load()
     df = df.withColumn("USE_TYPE", use_code_type(df["USE_CODE"]))
 
-    df_groupby_parcel = df.groupby("COUNTY", "PARCEL_ID", "SOURCE_INFO_DATE")
+    df_groupby_parcel = df.groupby("COUNTY", "PARCEL_ID")
     df_groupby_parcel.show(1)
 
     df_groupby_owner = df.select("OWNER_NAME", "MA_STREET_ADDRESS", "MA_CITY_STATE", "PARCEL_ID")
