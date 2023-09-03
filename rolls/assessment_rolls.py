@@ -302,7 +302,7 @@ def main():
         df = df.withColumn("USE_TYPE", use_code_type(df["USE_CODE"]))
 
         df_groupby_parcel = df.groupby("COUNTY", "PARCEL_ID")
-        df_groupby_parcel.show(1)
+        df_groupby_parcel.show(10)
 
 
 
