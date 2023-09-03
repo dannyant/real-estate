@@ -269,6 +269,11 @@ def main():
             .withColumn("USE_TYPE", use_code_type(df["USE_CODE"])) \
             .withColumn("COUNTY", alameda_udf())\
             .withColumn("PARCEL_ID", trimstr(df["APN_SHORT"])) \
+            .withColumn("ADDRESS_STREET_NAME", trimstr(df["ADDRESS_STREET_NAME"])) \
+            .withColumn("ADDRESS_UNIT_NUM", trimstr(df["ADDRESS_UNIT_NUM"])) \
+            .withColumn("ADDRESS_CITY", trimstr(df["ADDRESS_CITY"])) \
+            .withColumn("ADDRESS_ZIP", trimstr(df["ADDRESS_ZIP"])) \
+            .withColumn("ADDRESS_ZIP_EXTENSION", trimstr(df["ADDRESS_ZIP_EXTENSION"])) \
             .withColumn("TAXES_LAND_VALUE", to_int_conv(df["TAXES_LAND_VALUE"])) \
             .withColumn("TAXES_IMPROVEMENT_VALUE", to_int_conv(df["TAXES_IMPROVEMENT_VALUE"])) \
             .withColumn("CLCA_LAND_VALUE", to_int_conv(df["CLCA_LAND_VALUE"])) \
@@ -278,6 +283,25 @@ def main():
             .withColumn("HPP_VALUE", to_int_conv(df["HPP_VALUE"])) \
             .withColumn("HOMEOWNERS_EXEMPTION_VALUE", to_int_conv(df["HOMEOWNERS_EXEMPTION_VALUE"])) \
             .withColumn("OTHER_EXEMPTION_VALUE", to_int_conv(df["OTHER_EXEMPTION_VALUE"])) \
+            .withColumn("LAST_DOC_PREFIX", trimstr(df["LAST_DOC_PREFIX"])) \
+            .withColumn("LAST_DOC_SERIES", trimstr(df["LAST_DOC_SERIES"])) \
+            .withColumn("LAST_DOC_DATE", trimstr(df["LAST_DOC_DATE"])) \
+            .withColumn("LAST_DOC_INPUT_DATE", trimstr(df["LAST_DOC_INPUT_DATE"])) \
+            .withColumn("OWNER_NAME", trimstr(df["OWNER_NAME"])) \
+            .withColumn("MA_CARE_OF", trimstr(df["MA_CARE_OF"])) \
+            .withColumn("MA_ATTN_NAME", trimstr(df["MA_ATTN_NAME"])) \
+            .withColumn("MA_STREET_ADDRESS", trimstr(df["MA_STREET_ADDRESS"])) \
+            .withColumn("MA_UNIT_NUMBER", trimstr(df["MA_UNIT_NUMBER"])) \
+            .withColumn("MA_CITY_STATE", trimstr(df["MA_CITY_STATE"])) \
+            .withColumn("MA_ZIP_CODE", trimstr(df["MA_ZIP_CODE"])) \
+            .withColumn("MA_ZIP_CODE_EXTENSION", trimstr(df["MA_ZIP_CODE_EXTENSION"])) \
+            .withColumn("MA_BARECODE_WALK_SEQ", trimstr(df["MA_BARECODE_WALK_SEQ"])) \
+            .withColumn("MA_BARCODE_CHECK_DIGIT", trimstr(df["MA_BARCODE_CHECK_DIGIT"])) \
+            .withColumn("MA_EFFECTIVE_DATE", trimstr(df["MA_EFFECTIVE_DATE"])) \
+            .withColumn("MA_SOURCE_CODE", trimstr(df["MA_SOURCE_CODE"])) \
+            .withColumn("USE_CODE", trimstr(df["USE_CODE"])) \
+            .withColumn("ECON_UNIT_FLAG", trimstr(df["ECON_UNIT_FLAG"])) \
+            .withColumn("APN_INACTIVE_DATE", trimstr(df["APN_INACTIVE_DATE"])) \
             .withColumn("NET_TOTAL_VALUE", to_int_conv(df["NET_TOTAL_VALUE"]))
 
 
@@ -316,6 +340,30 @@ def main():
                  collect_list("CLCA_LAND_VALUE").alias("CLCA_LAND_VALUE_LIST"),
                  collect_list("CLCA_IMPROVEMENT_VALUE").alias("CLCA_IMPROVEMENT_VALUE_LIST"),
                  collect_list("FIXTURES_VALUE").alias("FIXTURES_VALUE_LIST"),
+                 collect_list("PERSONAL_PROPERTY_VALUE").alias("PERSONAL_PROPERTY_VALUE_LIST"),
+                 collect_list("HPP_VALUE").alias("HPP_VALUE_LIST"),
+                 collect_list("HOMEOWNERS_EXEMPTION_VALUE").alias("HOMEOWNERS_EXEMPTION_VALUE_LIST"),
+                 collect_list("OTHER_EXEMPTION_VALUE").alias("OTHER_EXEMPTION_VALUE_LIST"),
+                 collect_list("NET_TOTAL_VALUE").alias("NET_TOTAL_VALUE_LIST"),
+                 collect_list("LAST_DOC_PREFIX").alias("LAST_DOC_PREFIX_LIST"),
+                 collect_list("LAST_DOC_SERIES").alias("LAST_DOC_SERIES_LIST"),
+                 collect_list("LAST_DOC_DATE").alias("LAST_DOC_DATE_LIST"),
+                 collect_list("LAST_DOC_INPUT_DATE").alias("LAST_DOC_INPUT_DATE_LIST"),
+                 collect_list("OWNER_NAME").alias("OWNER_NAME_LIST"),
+                 collect_list("MA_CARE_OF").alias("MA_CARE_OF_LIST"),
+                 collect_list("MA_ATTN_NAME").alias("MA_ATTN_NAME_LIST"),
+                 collect_list("MA_STREET_ADDRESS").alias("MA_STREET_ADDRESS_LIST"),
+                 collect_list("MA_UNIT_NUMBER").alias("MA_UNIT_NUMBER_LIST"),
+                 collect_list("MA_CITY_STATE").alias("MA_CITY_STATE_LIST"),
+                 collect_list("MA_ZIP_CODE").alias("MA_ZIP_CODE_LIST"),
+                 collect_list("MA_ZIP_CODE_EXTENSION").alias("MA_ZIP_CODE_EXTENSION_LIST"),
+                 collect_list("MA_BARECODE_WALK_SEQ").alias("MA_BARECODE_WALK_SEQ_LIST"),
+                 collect_list("MA_BARCODE_CHECK_DIGIT").alias("MA_BARCODE_CHECK_DIGIT_LIST"),
+                 collect_list("MA_EFFECTIVE_DATE").alias("MA_EFFECTIVE_DATE_LIST"),
+                 collect_list("MA_SOURCE_CODE").alias("MA_SOURCE_CODE_LIST"),
+                 collect_list("USE_CODE").alias("USE_CODE_LIST"),
+                 collect_list("ECON_UNIT_FLAG").alias("ECON_UNIT_FLAG_LIST"),
+                 collect_list("APN_INACTIVE_DATE").alias("APN_INACTIVE_DATE_LIST"),
                  collect_list("ADDRESS_STREET_NAME").alias("ADDRESS_STREET_NAME_LIST")
                  ) \
             .withColumn("SOURCE_INFO_DATE", file_map[file]())
