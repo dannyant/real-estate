@@ -405,7 +405,7 @@ def main():
                  collect_list("ADDRESS_STREET_NAME").alias("ADDRESS_STREET_NAME_LIST")
                  )
 
-        df_groupby_parcel = df_groupby_parcel.select("COUNTY", "PARCEL_ID", "SOURCE_INFO_DATE", "USE_TYPE_LIST",
+        df_groupby_parcel = df_groupby_parcel.select("COUNTY", "PARCEL_ID", "USE_TYPE_LIST",
                     "PRI_TRA_LIST", "SEC_TRA_LIST", "ADDRESS_STREET_NUM_LIST", "ADDRESS_UNIT_NUM_LIST",
                     "ADDRESS_CITY_LIST", "ADDRESS_ZIP_EXTENSION_LIST", "ADDRESS_ZIP_LIST", "TAXES_LAND_VALUE_LIST",
                     "TAXES_IMPROVEMENT_VALUE_LIST", "TAXES_IMPROVEMENT_VALUE_LIST", "CLCA_LAND_VALUE_LIST",
