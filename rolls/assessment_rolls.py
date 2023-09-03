@@ -1,7 +1,7 @@
 import traceback
 
 from pyspark.sql.functions import udf, collect_list
-from pyspark.sql.types import StructType, StructField, StringType, NumericType, IntegerType
+from pyspark.sql.types import StructType, StructField, StringType, NumericType, IntegerType, BooleanType
 from pyspark.sql import SparkSession
 
 column_translations = {
@@ -137,6 +137,34 @@ def trim(val):
 def upper(val):
     return val.upper().strip()
 
+def is_owner_change(owner_list):
+    if len(owner_list) > 1:
+        last_owner = owner_list[-1]
+        prev_owner = owner_list[-2]
+        return last_owner != prev_owner
+    return False
+
+def is_street_change(street_list):
+    if len(street_list) > 1:
+        last_street = street_list[-1]
+        prev_street = street_list[-2]
+        return last_street != prev_street
+    return False
+
+def is_city_change(city_list):
+    if len(city_list) > 1:
+        last_city = city_list[-1]
+        prev_city = city_list[-2]
+        return last_city != prev_city
+    return False
+
+def is_state_change(state_list):
+    if len(state_list) > 1:
+        last_city = state_list[-1]
+        prev_city = state_list[-2]
+        return last_city != prev_city
+    return False
+
 def split_address_get_state(val):
     val = val.strip()
     split = val.split(" ")
@@ -171,6 +199,11 @@ use_code_type = udf(get_use_code_type, StringType())
 split_state = udf(split_address_get_state, StringType())
 split_city = udf(split_address_get_city, StringType())
 to_int_conv = udf(to_int, IntegerType())
+
+is_owner_change_udf = udf(is_owner_change, BooleanType())
+is_street_change_udf = udf(is_street_change, BooleanType())
+is_city_change_udf = udf(is_city_change, BooleanType())
+is_state_change_udf = udf(is_state_change, BooleanType())
 
 def main():
     spark = SparkSession.builder.appName("ProcessRolls").getOrCreate()
@@ -292,7 +325,8 @@ def main():
             .withColumn("MA_ATTN_NAME", trimstr(df["MA_ATTN_NAME"])) \
             .withColumn("MA_STREET_ADDRESS", trimstr(df["MA_STREET_ADDRESS"])) \
             .withColumn("MA_UNIT_NUMBER", trimstr(df["MA_UNIT_NUMBER"])) \
-            .withColumn("MA_CITY_STATE", trimstr(df["MA_CITY_STATE"])) \
+            .withColumn("MA_CITY", split_city(df["MA_CITY_STATE"])) \
+            .withColumn("MA_STATE", split_state(df["MA_CITY_STATE"])) \
             .withColumn("MA_ZIP_CODE", trimstr(df["MA_ZIP_CODE"])) \
             .withColumn("MA_ZIP_CODE_EXTENSION", trimstr(df["MA_ZIP_CODE_EXTENSION"])) \
             .withColumn("MA_BARECODE_WALK_SEQ", trimstr(df["MA_BARECODE_WALK_SEQ"])) \
@@ -311,7 +345,7 @@ def main():
                        "FIXTURES_VALUE", "PERSONAL_PROPERTY_VALUE", "HPP_VALUE", "HOMEOWNERS_EXEMPTION_VALUE",
                        "OTHER_EXEMPTION_VALUE", "NET_TOTAL_VALUE", "LAST_DOC_PREFIX", "LAST_DOC_SERIES", "LAST_DOC_DATE",
                        "LAST_DOC_INPUT_DATE", "OWNER_NAME", "MA_CARE_OF", "MA_ATTN_NAME", "MA_STREET_ADDRESS",
-                       "MA_UNIT_NUMBER", "MA_CITY_STATE", "MA_ZIP_CODE", "MA_ZIP_CODE_EXTENSION", "MA_BARECODE_WALK_SEQ",
+                       "MA_UNIT_NUMBER", "MA_CITY", "MA_STATE", "MA_ZIP_CODE", "MA_ZIP_CODE_EXTENSION", "MA_BARECODE_WALK_SEQ",
                        "MA_BARCODE_CHECK_DIGIT", "MA_EFFECTIVE_DATE", "MA_SOURCE_CODE", "USE_CODE", "ECON_UNIT_FLAG",
                         "APN_INACTIVE_DATE")\
             .withColumn("ADDRESS_STREET_NUM", upperstr(df["ADDRESS_STREET_NUM"]))
@@ -355,7 +389,8 @@ def main():
                  collect_list("MA_ATTN_NAME").alias("MA_ATTN_NAME_LIST"),
                  collect_list("MA_STREET_ADDRESS").alias("MA_STREET_ADDRESS_LIST"),
                  collect_list("MA_UNIT_NUMBER").alias("MA_UNIT_NUMBER_LIST"),
-                 collect_list("MA_CITY_STATE").alias("MA_CITY_STATE_LIST"),
+                 collect_list("MA_CITY").alias("MA_CITY_LIST"),
+                 collect_list("MA_STATE").alias("MA_STATE_LIST"),
                  collect_list("MA_ZIP_CODE").alias("MA_ZIP_CODE_LIST"),
                  collect_list("MA_ZIP_CODE_EXTENSION").alias("MA_ZIP_CODE_EXTENSION_LIST"),
                  collect_list("MA_BARECODE_WALK_SEQ").alias("MA_BARECODE_WALK_SEQ_LIST"),
@@ -367,6 +402,10 @@ def main():
                  collect_list("APN_INACTIVE_DATE").alias("APN_INACTIVE_DATE_LIST"),
                  collect_list("ADDRESS_STREET_NAME").alias("ADDRESS_STREET_NAME_LIST")
                  ) \
+            .withColumn("OWNER_NAME_CHANGE", is_owner_change_udf(df["OWNER_NAME_LIST"])) \
+            .withColumn("MA_STREET_ADDRESS_CHANGE", is_street_change_udf(df["MA_STREET_ADDRESS_LIST"])) \
+            .withColumn("MA_CITY_CHANGE", is_city_change_udf(df["MA_CITY_LIST"])) \
+            .withColumn("MA_STATE_CHANGE", is_state_change_udf(df["MA_STATE_LIST"])) \
             .withColumn("SOURCE_INFO_DATE", file_map[file]())
 
         df_groupby_parcel = df_groupby_parcel\
