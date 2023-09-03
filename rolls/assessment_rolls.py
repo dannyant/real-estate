@@ -332,6 +332,7 @@ def main():
                  collect_list("PRI_TRA").alias("PRI_TRA_LIST"),
                  collect_list("SEC_TRA").alias("SEC_TRA_LIST"),
                  collect_list("ADDRESS_STREET_NUM").alias("ADDRESS_STREET_NUM_LIST"),
+                 collect_list("ADDRESS_CITY").alias("ADDRESS_CITY_LIST"),
                  collect_list("ADDRESS_UNIT_NUM").alias("ADDRESS_UNIT_NUM_LIST"),
                  collect_list("ADDRESS_ZIP_EXTENSION").alias("ADDRESS_ZIP_EXTENSION_LIST"),
                  collect_list("ADDRESS_ZIP").alias("ADDRESS_ZIP_LIST"),
