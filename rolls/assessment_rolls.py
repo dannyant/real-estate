@@ -205,7 +205,7 @@ is_street_change_udf = udf(is_street_change, BooleanType())
 is_city_change_udf = udf(is_city_change, BooleanType())
 is_state_change_udf = udf(is_state_change, BooleanType())
 
-def main():
+def main_old():
     spark = SparkSession.builder.appName("ProcessRolls").getOrCreate()
     df = spark.read.csv("hdfs://namenode:8020/user/spark/apartments/rolls", sep="\t", schema=schema)
     df = df.withColumn("COUNTY", alameda_udf())\
@@ -292,6 +292,8 @@ def main():
         .option("zkUrl", "namenode:2181") \
         .save()
 
+def main():
+    spark = SparkSession.builder.appName("ProcessRolls").getOrCreate()
     file_map = {"IE670-11-01-17.TXT" : literal_nov17_udf, "IE670-05-01-22.TXT" : literal_may22_udf, "IE670-08-01-23.TXT" : literal_aug23_udf}
     for file in ["IE670-11-01-17.TXT", "IE670-05-01-22.TXT", "IE670-08-01-23.TXT"]:
         loc = "hdfs://namenode:8020/user/spark/apartments/rolls/" + file
@@ -417,10 +419,11 @@ def main():
                     "PERSONAL_PROPERTY_VALUE_LIST", "HPP_VALUE_LIST", "HOMEOWNERS_EXEMPTION_VALUE_LIST",
                     "OTHER_EXEMPTION_VALUE_LIST", "NET_TOTAL_VALUE_LIST", "LAST_DOC_PREFIX_LIST", "LAST_DOC_SERIES_LIST",
                     "LAST_DOC_DATE_LIST", "LAST_DOC_INPUT_DATE_LIST", "OWNER_NAME_LIST", "MA_CARE_OF_LIST",
-                    "MA_ATTN_NAME_LIST", "MA_STREET_ADDRESS_LIST", "MA_UNIT_NUMBER_LIST", "MA_CITY_STATE_LIST",
-                    "MA_ZIP_CODE_LIST", "MA_ZIP_CODE_EXTENSION_LIST", "MA_BARECODE_WALK_SEQ_LIST",
+                    "MA_ATTN_NAME_LIST", "MA_STREET_ADDRESS_LIST", "MA_UNIT_NUMBER_LIST", "MA_CITY_LIST",
+                    "MA_STATE_LIST", "MA_ZIP_CODE_LIST", "MA_ZIP_CODE_EXTENSION_LIST", "MA_BARECODE_WALK_SEQ_LIST",
                     "MA_BARCODE_CHECK_DIGIT_LIST", "MA_EFFECTIVE_DATE_LIST", "MA_SOURCE_CODE_LIST", "USE_CODE_LIST",
-                    "ECON_UNIT_FLAG_LIST", "APN_INACTIVE_DATE_LIST")
+                    "ECON_UNIT_FLAG_LIST", "APN_INACTIVE_DATE_LIST", "OWNER_NAME_CHANGE", "MA_STREET_ADDRESS_CHANGE",
+                    "MA_CITY_CHANGE", "MA_STATE_CHANGE")
 
         df_groupby_parcel.write.format("org.apache.phoenix.spark") \
                 .mode("overwrite") \
