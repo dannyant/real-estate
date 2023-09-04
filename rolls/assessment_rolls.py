@@ -331,11 +331,11 @@ def main():
                     "ECON_UNIT_FLAG_LIST", "APN_INACTIVE_DATE_LIST")
 
         df_groupby_parcel = df_groupby_parcel \
-            .withColumn("OWNER_NAME_CHANGE", last_list_value_change(df_groupby_parcel["OWNER_NAME_LIST"])) \
-            .withColumn("MA_STREET_ADDRESS_CHANGE", last_list_value_change(df_groupby_parcel["MA_STREET_ADDRESS_LIST"])) \
-            .withColumn("MA_CITY_CHANGE", last_list_value_change(df_groupby_parcel["MA_CITY_LIST"])) \
-            .withColumn("MA_STATE_CHANGE", last_list_value_change(df_groupby_parcel["MA_STATE_LIST"])) \
-            .withColumn("LAST_DOC_DATE_CHANGE", last_list_value_change(df_groupby_parcel["LAST_DOC_DATE_LIST"])) \
+            .withColumn("OWNER_NAME_CHANGE", last_list_value_change_udf(df_groupby_parcel["OWNER_NAME_LIST"])) \
+            .withColumn("MA_STREET_ADDRESS_CHANGE", last_list_value_change_udf(df_groupby_parcel["MA_STREET_ADDRESS_LIST"])) \
+            .withColumn("MA_CITY_CHANGE", last_list_value_change_udf(df_groupby_parcel["MA_CITY_LIST"])) \
+            .withColumn("MA_STATE_CHANGE", last_list_value_change_udf(df_groupby_parcel["MA_STATE_LIST"])) \
+            .withColumn("LAST_DOC_DATE_CHANGE", last_list_value_change_udf(df_groupby_parcel["LAST_DOC_DATE_LIST"])) \
             .withColumn("MA_DIFFERENT_CITY", newly_different_city_udf(df_groupby_parcel["ADDRESS_CITY_LIST"],
                                                                       df_groupby_parcel["MA_CITY_LIST"])) \
             .withColumn("MA_DIFFERENT_ADDR", newly_different_address_udf(df_groupby_parcel["ADDRESS_STREET_NUM_LIST"],
