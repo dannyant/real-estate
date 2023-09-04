@@ -416,8 +416,7 @@ def main():
                     "MA_ATTN_NAME_LIST", "MA_STREET_ADDRESS_LIST", "MA_UNIT_NUMBER_LIST", "MA_CITY_LIST",
                     "MA_STATE_LIST", "MA_ZIP_CODE_LIST", "MA_ZIP_CODE_EXTENSION_LIST", "MA_BARECODE_WALK_SEQ_LIST",
                     "MA_BARCODE_CHECK_DIGIT_LIST", "MA_EFFECTIVE_DATE_LIST", "MA_SOURCE_CODE_LIST", "USE_CODE_LIST",
-                    "ECON_UNIT_FLAG_LIST", "APN_INACTIVE_DATE_LIST", "OWNER_NAME_CHANGE", "MA_STREET_ADDRESS_CHANGE",
-                    "MA_CITY_CHANGE", "MA_STATE_CHANGE")
+                    "ECON_UNIT_FLAG_LIST", "APN_INACTIVE_DATE_LIST")
 
         df_groupby_parcel = df_groupby_parcel \
             .withColumn("OWNER_NAME_CHANGE", is_owner_change_udf(df["OWNER_NAME_LIST"])) \
