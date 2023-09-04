@@ -49,6 +49,6 @@ def main():
         .withColumn("APN_INACTIVE_DATE_LIST", col("APN_INACTIVE_DATE_LIST").cast("string"))
 
 
-    df.write.csv("hdfs://namenode:8020/user/spark/apartments/export/export.csv")
+    df.write.csv("hdfs://namenode:8020/user/spark/apartments/export/")
 
 main()
