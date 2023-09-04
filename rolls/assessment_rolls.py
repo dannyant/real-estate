@@ -131,6 +131,14 @@ def literal_may22():
 def literal_aug23():
     return "2023-08-01"
 
+def get_prev_date(date):
+    if date == "2023-08-01":
+        return "2022-05-01"
+    elif date == "2022-05-01":
+        return "2017-11-01"
+    else:
+        return None
+
 def trim(val):
     return val.strip()
 
@@ -192,6 +200,8 @@ alameda_udf = udf(alameda, StringType())
 literal_nov17_udf = udf(literal_nov17, StringType())
 literal_may22_udf = udf(literal_may22, StringType())
 literal_aug23_udf = udf(literal_aug23, StringType())
+get_prev_date_udf = udf(get_prev_date, StringType())
+
 
 trimstr = udf(trim, StringType())
 upperstr = udf(upper, StringType())
@@ -349,6 +359,17 @@ def main():
                 .option("zkUrl", "namenode:2181") \
                 .save()
 
+    df = spark.read.format("org.apache.phoenix.spark").option("table", "ROLL_INFO_AGG") \
+        .option("zkUrl", "namenode:2181").load()
+    df = df.select("COUNTY", "PARCEL_ID", "SOURCE_INFO_DATE", "LAST_DOC_DATE_CHANGE")
+    df = df.withColumnRenamed("LAST_DOC_DATE_CHANGE", "NET_TOTAL_VALUE") \
+        .withColumn("SOURCE_INFO_DATE", get_prev_date_udf(df_groupby_parcel["SOURCE_INFO_DATE"]))
+    df = df.filter("SOURCE_INFO_DATE is not NULL")
 
+    df.write.format("org.apache.phoenix.spark") \
+        .mode("overwrite") \
+        .option("table", "ROLL_INFO_AGG") \
+        .option("zkUrl", "namenode:2181") \
+        .save()
 
 main()
