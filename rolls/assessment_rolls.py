@@ -419,10 +419,10 @@ def main():
                     "ECON_UNIT_FLAG_LIST", "APN_INACTIVE_DATE_LIST")
 
         df_groupby_parcel = df_groupby_parcel \
-            .withColumn("OWNER_NAME_CHANGE", is_owner_change_udf(df["OWNER_NAME_LIST"])) \
-            .withColumn("MA_STREET_ADDRESS_CHANGE", is_street_change_udf(df["MA_STREET_ADDRESS_LIST"])) \
-            .withColumn("MA_CITY_CHANGE", is_city_change_udf(df["MA_CITY_LIST"])) \
-            .withColumn("MA_STATE_CHANGE", is_state_change_udf(df["MA_STATE_LIST"])) \
+            .withColumn("OWNER_NAME_CHANGE", is_owner_change_udf(df_groupby_parcel["OWNER_NAME_LIST"])) \
+            .withColumn("MA_STREET_ADDRESS_CHANGE", is_street_change_udf(df_groupby_parcel["MA_STREET_ADDRESS_LIST"])) \
+            .withColumn("MA_CITY_CHANGE", is_city_change_udf(df_groupby_parcel["MA_CITY_LIST"])) \
+            .withColumn("MA_STATE_CHANGE", is_state_change_udf(df_groupby_parcel["MA_STATE_LIST"])) \
             .withColumn("SOURCE_INFO_DATE", file_map[file]())
 
         df_groupby_parcel.write.format("org.apache.phoenix.spark") \
