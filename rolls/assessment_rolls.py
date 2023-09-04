@@ -362,7 +362,7 @@ def main():
     df = spark.read.format("org.apache.phoenix.spark").option("table", "ROLL_INFO_AGG") \
         .option("zkUrl", "namenode:2181").load()
     df = df.select("COUNTY", "PARCEL_ID", "SOURCE_INFO_DATE", "LAST_DOC_DATE_CHANGE")
-    df = df.withColumnRenamed("LAST_DOC_DATE_CHANGE", "NET_TOTAL_VALUE") \
+    df = df.withColumnRenamed("LAST_DOC_DATE_CHANGE", "FUTURE_SALE") \
         .withColumn("SOURCE_INFO_DATE", get_prev_date_udf(df["SOURCE_INFO_DATE"]))
     df = df.filter("SOURCE_INFO_DATE is not NULL")
 
