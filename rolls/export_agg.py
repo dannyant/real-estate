@@ -37,7 +37,8 @@ def main():
         .withColumn("MA_ATTN_NAME_LIST", col("MA_ATTN_NAME_LIST").cast("string")) \
         .withColumn("MA_STREET_ADDRESS_LIST", col("MA_STREET_ADDRESS_LIST").cast("string")) \
         .withColumn("MA_UNIT_NUMBER_LIST", col("MA_UNIT_NUMBER_LIST").cast("string")) \
-        .withColumn("MA_CITY_STATE_LIST", col("MA_CITY_STATE_LIST").cast("string")) \
+        .withColumn("MA_CITY_LIST", col("MA_CITY_LIST").cast("string")) \
+        .withColumn("MA_STATE_LIST", col("MA_STATE_LIST").cast("string")) \
         .withColumn("MA_ZIP_CODE_LIST", col("MA_ZIP_CODE_LIST").cast("string")) \
         .withColumn("MA_ZIP_CODE_EXTENSION_LIST", col("MA_ZIP_CODE_EXTENSION_LIST").cast("string")) \
         .withColumn("MA_BARECODE_WALK_SEQ_LIST", col("MA_BARECODE_WALK_SEQ_LIST").cast("string")) \
