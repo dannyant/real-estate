@@ -1,7 +1,7 @@
 import traceback
 
 from pyspark.sql.functions import udf, collect_list
-from pyspark.sql.types import StructType, StructField, StringType, NumericType, IntegerType, BooleanType
+from pyspark.sql.types import StructType, StructField, StringType, IntegerType, BooleanType
 from pyspark.sql import SparkSession
 
 column_translations = {
@@ -363,7 +363,7 @@ def main():
         .option("zkUrl", "namenode:2181").load()
     df = df.select("COUNTY", "PARCEL_ID", "SOURCE_INFO_DATE", "LAST_DOC_DATE_CHANGE")
     df = df.withColumnRenamed("LAST_DOC_DATE_CHANGE", "NET_TOTAL_VALUE") \
-        .withColumn("SOURCE_INFO_DATE", get_prev_date_udf(df_groupby_parcel["SOURCE_INFO_DATE"]))
+        .withColumn("SOURCE_INFO_DATE", get_prev_date_udf(df["SOURCE_INFO_DATE"]))
     df = df.filter("SOURCE_INFO_DATE is not NULL")
 
     df.write.format("org.apache.phoenix.spark") \
