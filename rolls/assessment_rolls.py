@@ -137,33 +137,13 @@ def trim(val):
 def upper(val):
     return val.upper().strip()
 
-def is_owner_change(owner_list):
+def last_list_value_change(owner_list):
     if len(owner_list) > 1:
         last_owner = owner_list[-1]
         prev_owner = owner_list[-2]
         return last_owner != prev_owner
     return False
 
-def is_street_change(street_list):
-    if len(street_list) > 1:
-        last_street = street_list[-1]
-        prev_street = street_list[-2]
-        return last_street != prev_street
-    return False
-
-def is_city_change(city_list):
-    if len(city_list) > 1:
-        last_city = city_list[-1]
-        prev_city = city_list[-2]
-        return last_city != prev_city
-    return False
-
-def is_state_change(state_list):
-    if len(state_list) > 1:
-        last_city = state_list[-1]
-        prev_city = state_list[-2]
-        return last_city != prev_city
-    return False
 
 def newly_different_city(city_lst, ma_city_lst):
     if len(city_lst) >= 1 and len(ma_city_lst) > 1:
@@ -220,10 +200,7 @@ split_state = udf(split_address_get_state, StringType())
 split_city = udf(split_address_get_city, StringType())
 to_int_conv = udf(to_int, IntegerType())
 
-is_owner_change_udf = udf(is_owner_change, BooleanType())
-is_street_change_udf = udf(is_street_change, BooleanType())
-is_city_change_udf = udf(is_city_change, BooleanType())
-is_state_change_udf = udf(is_state_change, BooleanType())
+last_list_value_change_udf = udf(last_list_value_change, BooleanType())
 newly_different_city_udf = udf(newly_different_city, BooleanType())
 newly_different_address_udf = udf(newly_different_address, BooleanType())
 
@@ -354,10 +331,11 @@ def main():
                     "ECON_UNIT_FLAG_LIST", "APN_INACTIVE_DATE_LIST")
 
         df_groupby_parcel = df_groupby_parcel \
-            .withColumn("OWNER_NAME_CHANGE", is_owner_change_udf(df_groupby_parcel["OWNER_NAME_LIST"])) \
-            .withColumn("MA_STREET_ADDRESS_CHANGE", is_street_change_udf(df_groupby_parcel["MA_STREET_ADDRESS_LIST"])) \
-            .withColumn("MA_CITY_CHANGE", is_city_change_udf(df_groupby_parcel["MA_CITY_LIST"])) \
-            .withColumn("MA_STATE_CHANGE", is_state_change_udf(df_groupby_parcel["MA_STATE_LIST"])) \
+            .withColumn("OWNER_NAME_CHANGE", last_list_value_change(df_groupby_parcel["OWNER_NAME_LIST"])) \
+            .withColumn("MA_STREET_ADDRESS_CHANGE", last_list_value_change(df_groupby_parcel["MA_STREET_ADDRESS_LIST"])) \
+            .withColumn("MA_CITY_CHANGE", last_list_value_change(df_groupby_parcel["MA_CITY_LIST"])) \
+            .withColumn("MA_STATE_CHANGE", last_list_value_change(df_groupby_parcel["MA_STATE_LIST"])) \
+            .withColumn("LAST_DOC_DATE_CHANGE", last_list_value_change(df_groupby_parcel["LAST_DOC_DATE_LIST"])) \
             .withColumn("MA_DIFFERENT_CITY", newly_different_city_udf(df_groupby_parcel["ADDRESS_CITY_LIST"],
                                                                       df_groupby_parcel["MA_CITY_LIST"])) \
             .withColumn("MA_DIFFERENT_ADDR", newly_different_address_udf(df_groupby_parcel["ADDRESS_STREET_NUM_LIST"],
