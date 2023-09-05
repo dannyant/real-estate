@@ -44,7 +44,7 @@ def main():
 
     bestSell = model.recommendForAllUsers(10)
     print(bestSell)
-    bestSell.show(10)
+    bestSell.show(10, truncate=False)
 
 main()
 
