@@ -30,7 +30,7 @@ def main():
         .withColumn("LAST_DOC_DATE_CHANGE", bool_to_int_udf("LAST_DOC_DATE_CHANGE"))
 
     df = df.select("OWNER_NAME_CHANGE", "MA_STREET_ADDRESS_CHANGE", "MA_CITY_CHANGE", "MA_STATE_CHANGE",
-                   "MA_STATE_CHANGE", "MA_DIFFERENT_CITY", "MA_DIFFERENT_ADDR", "FUTURE_SALE")
+                   "MA_STATE_CHANGE", "MA_DIFFERENT_CITY", "MA_DIFFERENT_ADDR", "LAST_DOC_DATE_CHANGE", "FUTURE_SALE")
     (training, test) = df.randomSplit([0.8, 0.2])
 
     als = ALS(maxIter=20, regParam=0.01, userCol="OWNER_NAME_CHANGE", itemCol="MA_CITY_CHANGE",
