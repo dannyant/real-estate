@@ -37,7 +37,7 @@ def main():
           ratingCol="FUTURE_SALE", coldStartStrategy="drop")
     model = als.fit(training)
     predictions = model.transform(test)
-    evaluator = RegressionEvaluator(metricName="rmse", labelCol="rating",
+    evaluator = RegressionEvaluator(metricName="rmse", labelCol="LAST_DOC_DATE_CHANGE",
                                     predictionCol="prediction")
     rmse = evaluator.evaluate(predictions)
     print("Root-mean-square error = " + str(rmse))
