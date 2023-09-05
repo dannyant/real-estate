@@ -33,7 +33,7 @@ def main():
                    "MA_STATE_CHANGE", "MA_DIFFERENT_CITY", "MA_DIFFERENT_ADDR", "LAST_DOC_DATE_CHANGE", "FUTURE_SALE")
     (training, test) = df.randomSplit([0.8, 0.2])
 
-    als = ALS(maxIter=20, regParam=0.01, userCol="OWNER_NAME_CHANGE", itemCol="MA_CITY_CHANGE",
+    als = ALS(maxIter=20, regParam=0.01, userCol="LAST_DOC_DATE_CHANGE", itemCol="OWNER_NAME_CHANGE,MA_STATE_CHANGE,MA_CITY_CHANGE",
           ratingCol="FUTURE_SALE", coldStartStrategy="drop")
     model = als.fit(training)
     predictions = model.transform(test)
