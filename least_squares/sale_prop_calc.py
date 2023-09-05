@@ -43,7 +43,8 @@ def main():
     print("Root-mean-square error = " + str(rmse))
 
     bestSell = model.recommendForAllUsers(10)
-
+    print(bestSell)
+    bestSell.show(10)
 
 main()
 
