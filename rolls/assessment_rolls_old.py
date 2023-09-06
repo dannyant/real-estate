@@ -228,13 +228,13 @@ def main():
         .save()
 
     tax_df = df.select("PARCEL_ID", "COUNTY", "USE_TYPE")
-    tax_df = tax_df.filter("USE_TYPE = 'COMMERCIAL_RESIDENTIAL'")
     tax_df.write.format("org.apache.phoenix.spark") \
         .mode("overwrite") \
         .option("table", "tax_info") \
         .option("zkUrl", "namenode:2181") \
         .save()
 
+    return True
     address_df = df.withColumn("STREET_NUMBER", upperstr(df["ADDRESS_STREET_NUM"])) \
         .withColumn("UNIT_NUMBER", upperstr(df["ADDRESS_UNIT_NUM"])) \
         .withColumn("STREET_NAME", upperstr(df["ADDRESS_STREET_NAME"])) \
