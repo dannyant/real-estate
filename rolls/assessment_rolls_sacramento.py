@@ -46,9 +46,13 @@ def upper(val):
 def sacramento():
     return "SACRAMENTO"
 
+def create_parcel_id(mapb, pg, pcl, psub):
+    return mapb + pg + pcl + psub
+
 trimstr = udf(trim, StringType())
 upperstr = udf(upper, StringType())
 sacramento_udf = udf(sacramento, StringType())
+create_parcel_id_udf = udf(create_parcel_id, StringType())
 
 
 def main():
@@ -59,7 +63,9 @@ def main():
     for file in ["2023_secured_roll.txt"]:
         loc = "hdfs://namenode:8020/user/spark/apartments/rolls/sacramento/" + file
         df = spark.read.csv(loc, sep=separators[file], schema=schema)
-        df = df.withColumn("COUNTY", sacramento_udf())
+        df = df.filter("MAPB != 'MAPB'")
+        df = df.withColumn("COUNTY", sacramento_udf()) \
+               .withColumn("PARCEL_ID", create_parcel_id_udf(df["MAPB"], df["PG"], df["PCL"], df["PSUB"]))
         df.show(5)
 
 
