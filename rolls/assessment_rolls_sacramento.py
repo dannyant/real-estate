@@ -43,7 +43,7 @@ def trim(val):
 def upper(val):
     return val.upper().strip()
 
-def sacramento(val):
+def sacramento():
     return "SACRAMENTO"
 
 trimstr = udf(trim, StringType())
