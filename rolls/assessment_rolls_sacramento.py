@@ -57,7 +57,7 @@ def main():
                   "2021_secured_roll.txt" : ';', "2022_secured_roll.txt" : ';', "2023_secured_roll.txt" : ';'}
     #for file in ["2018_secured_roll.txt", "2019_secured_roll.txt", "2020_secured_roll.txt", "2021_secured_roll.txt", "2022_secured_roll.txt", "2023_secured_roll.txt"]:
     for file in ["2023_secured_roll.txt"]:
-        loc = "hdfs://namenode:8020/user/spark/apartments/rolls/sacramento" + file
+        loc = "hdfs://namenode:8020/user/spark/apartments/rolls/sacramento/" + file
         df = spark.read.csv(loc, sep=separators[file], schema=schema)
         df = df.withColumn("COUNTY", sacramento_udf())
         df.show(5)
