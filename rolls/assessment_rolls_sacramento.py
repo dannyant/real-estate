@@ -79,10 +79,11 @@ def main():
                .withColumnRenamed("MAIL_ADDRESS", "MA_STREET_ADDRESS") \
                .withColumnRenamed("MAIL_CITY", "MA_CITY") \
                .withColumnRenamed("MAIL_STATE", "MA_STATE") \
+               .withColumnRenamed("CARE_OF", "MA_CARE_OF") \
                .withColumnRenamed("MAIL_ZIP", "MA_ZIP_CODE")
 
-        df2 = df.select("COUNTY", "PARCEL_ID", "SOURCE_INFO_DATE", "ADDRESS_CITY", "OWNER_NAME", "MA_STREET_ADDRESS", "MA_CITY", "MA_STATE", "MA_ZIP_CODE")
-        df = df.select("TAX_RATE_AREA", "SITUS_STREET", "SITUS_ZIP", "OWNER_CODE", "CARE_OF", "ZONING", "LAND_USE_CODE", "RECORDING_DATE", "RECORDING_PAGE", "DEED_TYPE", "LAND", "IM", "FIXTURE", "PP", "HO_EX", "EX", "VALUE_DT", "ACTION_CODE")
+        df2 = df.select("COUNTY", "PARCEL_ID", "SOURCE_INFO_DATE", "ADDRESS_CITY", "OWNER_NAME", "MA_STREET_ADDRESS", "MA_CITY", "MA_STATE", "MA_ZIP_CODE", "MA_CARE_OF")
+        df = df.select("TAX_RATE_AREA", "SITUS_STREET", "SITUS_ZIP", "OWNER_CODE", "ZONING", "LAND_USE_CODE", "RECORDING_DATE", "RECORDING_PAGE", "DEED_TYPE", "LAND", "IM", "FIXTURE", "PP", "HO_EX", "EX", "VALUE_DT", "ACTION_CODE")
 
 
         df2.show(5)
