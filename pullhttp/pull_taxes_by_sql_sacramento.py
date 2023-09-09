@@ -30,7 +30,7 @@ def pull_sacramento_taxes(parcel_id):
   return property_tax_html
 
 def pull_taxes(data):
-  return pull_sacramento_taxes(data)
+  return pull_sacramento_taxes(parcel_id)
 
 
 cursor = conn.cursor(cursor_factory=phoenixdb.cursor.DictCursor)
@@ -44,7 +44,7 @@ while not isempty:
         for parcel_dict in all_parcel_dict:
             county = parcel_dict["COUNTY"]
             parcel_id = parcel_dict["PARCEL_ID"]
-            content = pull_taxes(county, parcel_dict)
+            content = pull_taxes(parcel_id)
             if "System is temporarily unavailable" in content:
                 raise Exception("Unavaliable")
 
