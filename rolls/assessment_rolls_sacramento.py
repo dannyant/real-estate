@@ -134,6 +134,8 @@ def main():
                .withColumnRenamed("CARE_OF", "MA_CARE_OF") \
                .withColumnRenamed("MAIL_ZIP", "MA_ZIP_CODE") \
                .withColumnRenamed("TAX_RATE_AREA", "PRI_TRA") \
+               .withColumnRenamed("LAND", "TAXES_LAND_VALUE") \
+               .withColumnRenamed("IM", "TAXES_IMPROVEMENT_VALUE") \
                .withColumnRenamed("ZONING", "USE_CODE")
 
         df = df.withColumn("USE_TYPE", zoning_udf(df["USE_CODE"]))
@@ -148,11 +150,9 @@ def main():
                 .option("zkUrl", "namenode:2181") \
                 .save()
 
-        df3 = df.select("COUNTY", "PARCEL_ID", "USE_TYPE", "OWNER_CODE", "USE_CODE", "LAND_USE_CODE", "RECORDING_DATE", "RECORDING_PAGE", "DEED_TYPE", "LAND", "IM", "FIXTURE", "PP", "HO_EX", "EX", "VALUE_DT", "ACTION_CODE")
+        df3 = df.select("COUNTY", "PARCEL_ID", "USE_TYPE", "OWNER_CODE", "USE_CODE", "LAND_USE_CODE", "RECORDING_DATE", "RECORDING_PAGE", "DEED_TYPE", "FIXTURE", "PP", "HO_EX", "EX", "ACTION_CODE")
 
-
-        df2.show(50)
-        df3.show(50)
+        df3.show(200)
 
 
 
