@@ -137,13 +137,15 @@ def main():
                .withColumnRenamed("LAND", "TAXES_LAND_VALUE") \
                .withColumnRenamed("IM", "TAXES_IMPROVEMENT_VALUE") \
                .withColumnRenamed("ZONING", "USE_CODE") \
-               .withColumnRenamed("HO_EX" , "HOMEOWNERS_EXEMPTION_VALUE")
+               .withColumnRenamed("EX", "OTHER_EXEMPTION_VALUE") \
+               .withColumnRenamed("HO_EX", "HOMEOWNERS_EXEMPTION_VALUE")
 
         df = df.withColumn("USE_TYPE", zoning_udf(df["USE_CODE"]))
 
         df2 = df.select("COUNTY", "PARCEL_ID", "SOURCE_INFO_DATE", "USE_TYPE", "USE_CODE", "ADDRESS_STREET_NUM",
                         "ADDRESS_STREET_NAME", "ADDRESS_CITY", "ADDRESS_ZIP", "OWNER_NAME", "MA_STREET_ADDRESS",
-                        "MA_CITY", "MA_STATE", "MA_ZIP_CODE", "MA_CARE_OF", "LAST_DOC_DATE")
+                        "MA_CITY", "MA_STATE", "MA_ZIP_CODE", "MA_CARE_OF", "LAST_DOC_DATE", "TAXES_LAND_VALUE",
+                        "TAXES_IMPROVEMENT_VALUE", "PRI_TRA", "HOMEOWNERS_EXEMPTION_VALUE", "OTHER_EXEMPTION_VALUE")
 
         df2.write.format("org.apache.phoenix.spark") \
                 .mode("overwrite") \
@@ -151,7 +153,7 @@ def main():
                 .option("zkUrl", "namenode:2181") \
                 .save()
 
-        df3 = df.select("COUNTY", "PARCEL_ID", "USE_TYPE", "OWNER_CODE", "USE_CODE", "LAND_USE_CODE", "RECORDING_DATE", "RECORDING_PAGE", "DEED_TYPE", "FIXTURE", "PP", "HO_EX", "EX", "ACTION_CODE")
+        df3 = df.select("COUNTY", "PARCEL_ID", "USE_TYPE", "OWNER_CODE", "USE_CODE", "LAND_USE_CODE", "RECORDING_DATE", "RECORDING_PAGE", "DEED_TYPE", "FIXTURE", "PP", "EX", "ACTION_CODE")
 
         df3.show(200)
 
