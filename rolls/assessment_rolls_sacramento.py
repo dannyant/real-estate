@@ -88,8 +88,8 @@ def main():
         df3 = df.select("COUNTY", "PARCEL_ID", "TAX_RATE_AREA", "OWNER_CODE", "ZONING", "LAND_USE_CODE", "RECORDING_DATE", "RECORDING_PAGE", "DEED_TYPE", "LAND", "IM", "FIXTURE", "PP", "HO_EX", "EX", "VALUE_DT", "ACTION_CODE")
 
 
-        df2.show(20)
-        df3.show(20)
+        df2.show(50)
+        df3.show(50)
 
 
 
