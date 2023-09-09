@@ -65,6 +65,8 @@ def zoning(zone):
         return "HEAVY_INDUSTRIAL"
     elif zone[0:3] == "M-1":
         return "LIGHT_INDUSTRIAL"
+    elif zone[0:5] == "ARP-F":
+        return "FLOODPLAIN"
     else:
         return "UNKNOWN"
 
