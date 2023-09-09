@@ -48,6 +48,9 @@ while not isempty:
             if "System is temporarily unavailable" in content:
                 raise Exception("Unavaliable")
 
+            if "Unpaid" in content:
+                print(parcel_id)
+
             cursor.execute("UPSERT INTO tax_info (PARCEL_ID, COUNTY, HTML_CONTENTS, LAST_DOWNLOADED) VALUES (?, ?, ?, ?)", (parcel_id, county, content, str(datetime.now())))
             time.sleep(30)
     except Exception as ex:
