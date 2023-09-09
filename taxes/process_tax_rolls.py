@@ -44,11 +44,10 @@ def parse_delinquent_tax_bill_alameda(html_content):
 def parse_delinquent_tax_bill_sacramento(json_content):
     try:
         json_data = json.loads(json_content)
-        if "UnpaidFees" in json_data:
-            print(json_data["GlobalData"]["ParcelNumber"])
-        unpaid = json_data["UnpaidFees"]
-        if len(unpaid) > 0:
-            return float(unpaid[0]["BillAmount"])
+        if "Delinquent" not in json_data:
+            return None
+        unpaid = json_data["Delinquent"]
+        return float(unpaid["RedemptionOutstanding"])
     except:
         traceback.print_exc()
         return None
