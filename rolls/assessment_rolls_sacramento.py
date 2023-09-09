@@ -69,6 +69,8 @@ def zoning(zone):
         return "RESIDENTIAL_UNKNOWN"
     elif zone[0:3] == "RD-":
         return "RESIDENTIAL_UNKNOWN"
+    elif zone[0:3] == "RD":
+        return "RESIDENTIAL_UNKNOWN"
     elif zone[0:3] == "R-2":
         return "RESIDENTIAL_MULTI_SF"
     elif zone[0:3] == "R-3":
