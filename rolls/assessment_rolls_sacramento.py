@@ -98,6 +98,12 @@ def main():
                .withColumn("USE_TYPE", zoning_udf(df["ZONING"]))
 
         df2 = df.select("COUNTY", "PARCEL_ID", "SOURCE_INFO_DATE", "USE_TYPE", "ADDRESS_STREET_NUM", "ADDRESS_STREET_NAME", "ADDRESS_CITY", "OWNER_NAME", "MA_STREET_ADDRESS", "MA_CITY", "MA_STATE", "MA_ZIP_CODE", "MA_CARE_OF")
+        df2.write.format("org.apache.phoenix.spark") \
+                .mode("overwrite") \
+                .option("table", "ROLL_INFO") \
+                .option("zkUrl", "namenode:2181") \
+                .save()
+
         df3 = df.select("COUNTY", "PARCEL_ID", "USE_TYPE", "TAX_RATE_AREA", "OWNER_CODE", "ZONING", "LAND_USE_CODE", "RECORDING_DATE", "RECORDING_PAGE", "DEED_TYPE", "LAND", "IM", "FIXTURE", "PP", "HO_EX", "EX", "VALUE_DT", "ACTION_CODE")
 
 
