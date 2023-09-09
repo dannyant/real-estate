@@ -72,7 +72,14 @@ def main():
         df = df.withColumn("COUNTY", sacramento_udf()) \
                .withColumn("PARCEL_ID", create_parcel_id_udf(df["MAPB"], df["PG"], df["PCL"], df["PSUB"])) \
                .withColumn("SOURCE_INFO_DATE", udfs[file]())
+
+        df = df.withColumnRenamed("SITUS_NUMBER", "ADDRESS_STREET_NUM")\
+               .withColumnRenamed("SITUS_STREET_SUB", "ADDRESS_CITY")
+        
+        df = df.select("COUNTY", "PARCEL_ID", "SOURCE_INFO_DATE", "PRI_TRA", "ADDRESS_STREET_NUM", "ADDRESS_CITY", "SITUS_STREET", "SITUS_ZIP", "OWNER_CODE", "OWNER", "MAIL_ADDRESS", "MAIL_CITY", "MAIL_STATE", "MAIL_ZIP", "CARE_OF", "ZONING", "LAND_USE_CODE", "RECORDING_DATE", "RECORDING_PAGE", "DEED_TYPE", "LAND", "IM", "FIXTURE", "PP", "HO_EX", "EX", "VALUE_DT", "ACTION_CODE")
+        
         df.show(5)
+        
 
 
 
