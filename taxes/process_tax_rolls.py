@@ -1,3 +1,6 @@
+import json
+import traceback
+
 from pyspark.sql import SparkSession
 import re
 
@@ -7,6 +10,7 @@ from pyspark.sql.types import FloatType
 current_tax_bill_re = re.compile("DISPLAY CURRENT BILL RESULTS[^$]*\\$([0-9,.]*).*DISPLAY PRIOR YEAR DELINQUENT TAX INFORMATION")
 delinquent_tax_bill_re = re.compile("DISPLAY PRIOR YEAR DELINQUENT TAX INFORMATION[^$]*\\$([0-9,.]*).*DISPLAY TAX HISTORY")
 
+SAC_PAID = '{"GlobalData":{"TodaysDate":"20230909","ParcelNumber":"53201201020013","EDO":"20070401","Address":"ARCHER WHITNEY","City":"ELK GROVE","State":"CA","Zip":"95758","TaxRateArea":"56006","IsDelinquent":false,"IsVoid":false,"SecuredPropAllowPayments":true,"UnsecuredPropAllowPayments":true,"BlockedParcel":false},"MainRoll":false,"BillCount":1,"Bills":[{"RollDate":"2022","BillAmount":"223.56","BillNumber":"495834","BillType":"Secured","AssessmentType":"Annual","LevyAmount":"0.00","TaxStatus":"Unpaid","IsRollover":false,"HasFee":false}],"UnpaidFees":[],"ErrorMessage":null,"Success":true}'
 
 def base_parse_tax_bill(regex, html_content):
     try:
@@ -27,13 +31,29 @@ def parse_current_tax_bill_alameda(html_content):
     return base_parse_tax_bill(current_tax_bill_re, html_content)
 
 def parse_current_tax_bill_sacramento(json_content):
-    return None
+    try:
+        json_data = json.loads(json_content)
+        return float(json_data["Bills"][0]["BillAmount"])
+    except:
+        traceback.print_exc()
+        return None
 
 def parse_delinquent_tax_bill_alameda(html_content):
     return base_parse_tax_bill(delinquent_tax_bill_re, html_content)
 
 def parse_delinquent_tax_bill_sacramento(json_content):
-    return None
+    try:
+        json_data = json.loads(json_content)
+        if "UnpaidFees" in json_data:
+            print(json_data["GlobalData"]["ParcelNumber"])
+        unpaid = json_data["UnpaidFees"]
+        if len(unpaid) > 0:
+            return float(unpaid[0]["BillAmount"])
+    except:
+        traceback.print_exc()
+        return None
+
+parse_delinquent_tax_bill_sacramento(SAC_PAID)
 
 current_function = {"ALAMEDA" : parse_current_tax_bill_alameda, "SACRAMENTO" : parse_current_tax_bill_sacramento}
 delinquent_function = {"ALAMEDA" : parse_delinquent_tax_bill_alameda, "SACRAMENTO" : parse_delinquent_tax_bill_sacramento}
