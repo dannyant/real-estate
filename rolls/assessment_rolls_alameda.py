@@ -132,7 +132,7 @@ def literal_aug23():
     return "2023-08-01"
 
 def literal_sep23():
-    return "2023-9-01"
+    return "2023-09-01"
 
 def get_prev_date(date):
     if date == "2023-08-01":
