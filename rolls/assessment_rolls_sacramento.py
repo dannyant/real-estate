@@ -1,7 +1,7 @@
 import traceback
 from datetime import datetime
 
-from pyspark.sql.functions import udf, collect_list
+from pyspark.sql.functions import udf, collect_list, col
 from pyspark.sql.types import StructType, StructField, StringType, IntegerType, BooleanType
 from pyspark.sql import SparkSession
 
@@ -121,7 +121,11 @@ def main():
         df = df.withColumn("COUNTY", sacramento_udf()) \
                .withColumn("PARCEL_ID", create_parcel_id_udf(df["MAPB"], df["PG"], df["PCL"], df["PSUB"])) \
                .withColumn("SOURCE_INFO_DATE", udfs[file]()) \
-               .withColumn("LAST_DOC_DATE", reformat_sale_time_udf(df["VALUE_DT"]))
+               .withColumn("LAST_DOC_DATE", reformat_sale_time_udf(df["VALUE_DT"])) \
+               .withColumn("TAXES_IMPROVEMENT_VALUE", col("IM").cast("int")) \
+               .withColumn("OTHER_EXEMPTION_VALUE", col("EX").cast("int")) \
+               .withColumn("HOMEOWNERS_EXEMPTION_VALUE", col("HO_EX").cast("int")) \
+               .withColumn("TAXES_LAND_VALUE", col("LAND").cast("int"))
 
         df = df.withColumnRenamed("SITUS_NUMBER", "ADDRESS_STREET_NUM") \
                .withColumnRenamed("SITUS_STREET", "ADDRESS_STREET_NAME") \
