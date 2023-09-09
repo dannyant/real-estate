@@ -74,10 +74,16 @@ def main():
                .withColumn("SOURCE_INFO_DATE", udfs[file]())
 
         df = df.withColumnRenamed("SITUS_NUMBER", "ADDRESS_STREET_NUM")\
-               .withColumnRenamed("SITUS_STREET_SUB", "ADDRESS_CITY")
-        
-        df2 = df.select("COUNTY", "PARCEL_ID", "SOURCE_INFO_DATE", "ADDRESS_CITY")
-        df = df.select("TAX_RATE_AREA", "SITUS_STREET", "SITUS_ZIP", "OWNER_CODE", "OWNER", "MAIL_ADDRESS", "MAIL_CITY", "MAIL_STATE", "MAIL_ZIP", "CARE_OF", "ZONING", "LAND_USE_CODE", "RECORDING_DATE", "RECORDING_PAGE", "DEED_TYPE", "LAND", "IM", "FIXTURE", "PP", "HO_EX", "EX", "VALUE_DT", "ACTION_CODE")
+               .withColumnRenamed("SITUS_STREET_SUB", "ADDRESS_CITY") \
+               .withColumnRenamed("OWNER", "OWNER_NAME") \
+               .withColumnRenamed("MAIL_ADDRESS", "MA_STREET_ADDRESS") \
+               .withColumnRenamed("MAIL_CITY", "MA_CITY") \
+               .withColumnRenamed("MAIL_STATE", "MA_STATE") \
+               .withColumnRenamed("MAIL_ZIP", "MA_ZIP_CODE")
+
+        df2 = df.select("COUNTY", "PARCEL_ID", "SOURCE_INFO_DATE", "ADDRESS_CITY", "OWNER_NAME", "MA_STREET_ADDRESS", "MA_CITY", "MA_STATE", "MA_ZIP_CODE")
+        df = df.select("TAX_RATE_AREA", "SITUS_STREET", "SITUS_ZIP", "OWNER_CODE", "CARE_OF", "ZONING", "LAND_USE_CODE", "RECORDING_DATE", "RECORDING_PAGE", "DEED_TYPE", "LAND", "IM", "FIXTURE", "PP", "HO_EX", "EX", "VALUE_DT", "ACTION_CODE")
+
 
         df2.show(5)
         df.show(5)
