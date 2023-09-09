@@ -10,8 +10,6 @@ from pyspark.sql.types import FloatType
 current_tax_bill_re = re.compile("DISPLAY CURRENT BILL RESULTS[^$]*\\$([0-9,.]*).*DISPLAY PRIOR YEAR DELINQUENT TAX INFORMATION")
 delinquent_tax_bill_re = re.compile("DISPLAY PRIOR YEAR DELINQUENT TAX INFORMATION[^$]*\\$([0-9,.]*).*DISPLAY TAX HISTORY")
 
-SAC_PAID = '{"GlobalData":{"TodaysDate":"20230909","ParcelNumber":"53201201020013","EDO":"20070401","Address":"ARCHER WHITNEY","City":"ELK GROVE","State":"CA","Zip":"95758","TaxRateArea":"56006","IsDelinquent":false,"IsVoid":false,"SecuredPropAllowPayments":true,"UnsecuredPropAllowPayments":true,"BlockedParcel":false},"MainRoll":false,"BillCount":1,"Bills":[{"RollDate":"2022","BillAmount":"223.56","BillNumber":"495834","BillType":"Secured","AssessmentType":"Annual","LevyAmount":"0.00","TaxStatus":"Unpaid","IsRollover":false,"HasFee":false}],"UnpaidFees":[],"ErrorMessage":null,"Success":true}'
-
 def base_parse_tax_bill(regex, html_content):
     try:
         match = regex.search(html_content.replace("\n",""))
@@ -73,7 +71,7 @@ def main():
     df = spark.read.format("org.apache.phoenix.spark").option("table", "tax_info") \
         .option("zkUrl", "namenode:2181").load()
 
-    df = df.filter("LAST_DOWNLOADED is not NULL and COUNTY = 'ALAMEDA'")\
+    df = df.filter("LAST_DOWNLOADED is not NULL")\
         .withColumn("CURRENT_TAX_BILL", current_udf(df["COUNTY"], df["html_contents"])) \
         .withColumn("DELINQUENT_TAX_BILL", delinquent_udf(df["COUNTY"], df["html_contents"]))
     df = df.select("PARCEL_ID", "COUNTY", "CURRENT_TAX_BILL", "DELINQUENT_TAX_BILL")
