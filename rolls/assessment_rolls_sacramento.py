@@ -101,7 +101,7 @@ def main():
 
         df = df.withColumn("USE_TYPE", zoning_udf(df["USE_CODE"]))
 
-        df2 = df.select("COUNTY", "PARCEL_ID", "SOURCE_INFO_DATE", "USE_TYPE", "ADDRESS_STREET_NUM", "ADDRESS_STREET_NAME", "ADDRESS_CITY", "OWNER_NAME", "MA_STREET_ADDRESS", "MA_CITY", "MA_STATE", "MA_ZIP_CODE", "MA_CARE_OF")
+        df2 = df.select("COUNTY", "PARCEL_ID", "SOURCE_INFO_DATE", "USE_TYPE", "USE_CODE", "ADDRESS_STREET_NUM", "ADDRESS_STREET_NAME", "ADDRESS_CITY", "OWNER_NAME", "MA_STREET_ADDRESS", "MA_CITY", "MA_STATE", "MA_ZIP_CODE", "MA_CARE_OF")
         df2.write.format("org.apache.phoenix.spark") \
                 .mode("overwrite") \
                 .option("table", "ROLL_INFO") \
