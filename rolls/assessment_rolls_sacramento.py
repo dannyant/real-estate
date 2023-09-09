@@ -138,11 +138,7 @@ def main():
                .withColumnRenamed("CARE_OF", "MA_CARE_OF") \
                .withColumnRenamed("MAIL_ZIP", "MA_ZIP_CODE") \
                .withColumnRenamed("TAX_RATE_AREA", "PRI_TRA") \
-               .withColumnRenamed("LAND", "TAXES_LAND_VALUE") \
-               .withColumnRenamed("IM", "TAXES_IMPROVEMENT_VALUE") \
-               .withColumnRenamed("ZONING", "USE_CODE") \
-               .withColumnRenamed("EX", "OTHER_EXEMPTION_VALUE") \
-               .withColumnRenamed("HO_EX", "HOMEOWNERS_EXEMPTION_VALUE")
+               .withColumnRenamed("ZONING", "USE_CODE")
 
         df = df.withColumn("USE_TYPE", zoning_udf(df["USE_CODE"]))
 
