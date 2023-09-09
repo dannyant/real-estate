@@ -50,8 +50,6 @@ def parse_delinquent_tax_bill_sacramento(json_content):
         traceback.print_exc()
         return None
 
-parse_delinquent_tax_bill_sacramento(SAC_PAID)
-
 current_function = {"ALAMEDA" : parse_current_tax_bill_alameda, "SACRAMENTO" : parse_current_tax_bill_sacramento}
 delinquent_function = {"ALAMEDA" : parse_delinquent_tax_bill_alameda, "SACRAMENTO" : parse_delinquent_tax_bill_sacramento}
 
