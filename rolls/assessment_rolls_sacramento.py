@@ -73,8 +73,10 @@ def main():
                .withColumn("PARCEL_ID", create_parcel_id_udf(df["MAPB"], df["PG"], df["PCL"], df["PSUB"])) \
                .withColumn("SOURCE_INFO_DATE", udfs[file]())
 
-        df = df.withColumnRenamed("SITUS_NUMBER", "ADDRESS_STREET_NUM")\
+        df = df.withColumnRenamed("SITUS_NUMBER", "ADDRESS_STREET_NUM") \
+               .withColumnRenamed("SITUS_STREET", "ADDRESS_STREET_NAME") \
                .withColumnRenamed("SITUS_STREET_SUB", "ADDRESS_CITY") \
+               .withColumnRenamed("SITUS_ZIP", "ADDRESS_ZIP") \
                .withColumnRenamed("OWNER", "OWNER_NAME") \
                .withColumnRenamed("MAIL_ADDRESS", "MA_STREET_ADDRESS") \
                .withColumnRenamed("MAIL_CITY", "MA_CITY") \
@@ -82,12 +84,12 @@ def main():
                .withColumnRenamed("CARE_OF", "MA_CARE_OF") \
                .withColumnRenamed("MAIL_ZIP", "MA_ZIP_CODE")
 
-        df2 = df.select("COUNTY", "PARCEL_ID", "SOURCE_INFO_DATE", "ADDRESS_CITY", "OWNER_NAME", "MA_STREET_ADDRESS", "MA_CITY", "MA_STATE", "MA_ZIP_CODE", "MA_CARE_OF")
-        df = df.select("TAX_RATE_AREA", "SITUS_STREET", "SITUS_ZIP", "OWNER_CODE", "ZONING", "LAND_USE_CODE", "RECORDING_DATE", "RECORDING_PAGE", "DEED_TYPE", "LAND", "IM", "FIXTURE", "PP", "HO_EX", "EX", "VALUE_DT", "ACTION_CODE")
+        df = df.select("COUNTY", "PARCEL_ID", "SOURCE_INFO_DATE", "ADDRESS_STREET_NAME", "ADDRESS_CITY", "OWNER_NAME", "MA_STREET_ADDRESS", "MA_CITY", "MA_STATE", "MA_ZIP_CODE", "MA_CARE_OF")
+        df2 = df.select("TAX_RATE_AREA", "SITUS_ZIP", "OWNER_CODE", "ZONING", "LAND_USE_CODE", "RECORDING_DATE", "RECORDING_PAGE", "DEED_TYPE", "LAND", "IM", "FIXTURE", "PP", "HO_EX", "EX", "VALUE_DT", "ACTION_CODE")
 
 
-        df2.show(5)
         df.show(5)
+        df2.show(5)
 
 
 
