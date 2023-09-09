@@ -136,7 +136,8 @@ def main():
                .withColumnRenamed("TAX_RATE_AREA", "PRI_TRA") \
                .withColumnRenamed("LAND", "TAXES_LAND_VALUE") \
                .withColumnRenamed("IM", "TAXES_IMPROVEMENT_VALUE") \
-               .withColumnRenamed("ZONING", "USE_CODE")
+               .withColumnRenamed("ZONING", "USE_CODE") \
+               .withColumnRenamed("HO_EX" , "HOMEOWNERS_EXEMPTION_VALUE")
 
         df = df.withColumn("USE_TYPE", zoning_udf(df["USE_CODE"]))
 
