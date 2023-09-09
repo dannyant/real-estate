@@ -49,7 +49,7 @@ while not isempty:
             parcel_id = parcel_dict["PARCEL_ID"]
             county = parcel_dict["COUNTY"]
             content = pull_sacramento_taxes(parcel_id)
-            if "System is temporarily unavailable" in content:
+            if "Exception" in content:
                 raise Exception("Unavaliable")
 
             if '"IsDelinquent":true' in content:
