@@ -45,7 +45,7 @@ while not isempty:
         all_parcel_dict = cursor.fetchall()
         isempty = len(all_parcel_dict) == 0
         print("count = " + str(len(all_parcel_dict)) + " \t " + str(datetime.now()))
-        for parcel_dict in [{"PARCEL_ID" : "00102100180000", "COUNTY" : "SACRAMENTO"}]:
+        for parcel_dict in all_parcel_dict:
             parcel_id = parcel_dict["PARCEL_ID"]
             county = parcel_dict["COUNTY"]
             content = pull_sacramento_taxes(parcel_id)
