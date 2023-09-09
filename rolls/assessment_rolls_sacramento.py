@@ -55,8 +55,14 @@ def source_info_2023():
 def zoning(zone):
     if zone is None:
         return "UNKNOWN_NULL"
-    if zone[0:3] == "C-2":
+    elif zone[0:3] == "C-1":
+        return "COMMERCIAL_LIGHT"
+    elif zone[0:3] == "C-2":
         return "COMMERCIAL_SHOPPING"
+    elif zone[0:3] == "C-3":
+        return "COMMERCIAL_BUISNESS"
+    elif zone[0:3] == "C-4":
+        return "COMMERCIAL_HEAVY"
     elif zone[0:3] == "R-1":
         return "RESIDENTIAL_SF"
     elif zone[0:3] == "R-3":
