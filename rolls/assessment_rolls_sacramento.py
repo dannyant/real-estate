@@ -1,4 +1,5 @@
 import traceback
+from datetime import datetime
 
 from pyspark.sql.functions import udf, collect_list
 from pyspark.sql.types import StructType, StructField, StringType, IntegerType, BooleanType
@@ -90,6 +91,13 @@ def zoning(zone):
     else:
         return "UNKNOWN"
 
+def reformat_sale_time(date_str):
+    try:
+        out = datetime.strptime(date_str, '%d-%b-%y')
+        return out.strftime('%Y%m%d')
+    except:
+        return date_str
+
 
 trimstr = udf(trim, StringType())
 upperstr = udf(upper, StringType())
@@ -97,6 +105,7 @@ sacramento_udf = udf(sacramento, StringType())
 create_parcel_id_udf = udf(create_parcel_id, StringType())
 source_info_2023_udf = udf(source_info_2023, StringType())
 zoning_udf = udf(zoning, StringType())
+reformat_sale_time_udf = udf(reformat_sale_time, StringType())
 
 
 def main():
@@ -111,7 +120,8 @@ def main():
         df = df.filter("MAPB != 'MAPB'")
         df = df.withColumn("COUNTY", sacramento_udf()) \
                .withColumn("PARCEL_ID", create_parcel_id_udf(df["MAPB"], df["PG"], df["PCL"], df["PSUB"])) \
-               .withColumn("SOURCE_INFO_DATE", udfs[file]())
+               .withColumn("SOURCE_INFO_DATE", udfs[file]()) \
+               .withColumn("LAST_DOC_DATE", reformat_sale_time_udf(df["VALUE_DT"]))
 
         df = df.withColumnRenamed("SITUS_NUMBER", "ADDRESS_STREET_NUM") \
                .withColumnRenamed("SITUS_STREET", "ADDRESS_STREET_NAME") \
@@ -123,13 +133,14 @@ def main():
                .withColumnRenamed("MAIL_STATE", "MA_STATE") \
                .withColumnRenamed("CARE_OF", "MA_CARE_OF") \
                .withColumnRenamed("MAIL_ZIP", "MA_ZIP_CODE") \
+               .withColumnRenamed("TAX_RATE_AREA", "PRI_TRA") \
                .withColumnRenamed("ZONING", "USE_CODE")
 
         df = df.withColumn("USE_TYPE", zoning_udf(df["USE_CODE"]))
 
         df2 = df.select("COUNTY", "PARCEL_ID", "SOURCE_INFO_DATE", "USE_TYPE", "USE_CODE", "ADDRESS_STREET_NUM",
                         "ADDRESS_STREET_NAME", "ADDRESS_CITY", "ADDRESS_ZIP", "OWNER_NAME", "MA_STREET_ADDRESS",
-                        "MA_CITY", "MA_STATE", "MA_ZIP_CODE", "MA_CARE_OF")
+                        "MA_CITY", "MA_STATE", "MA_ZIP_CODE", "MA_CARE_OF", "LAST_DOC_DATE")
 
         df2.write.format("org.apache.phoenix.spark") \
                 .mode("overwrite") \
