@@ -52,11 +52,23 @@ def create_parcel_id(mapb, pg, pcl, psub):
 def source_info_2023():
     return "2023"
 
+def zoning(zone):
+    if zone[0:3] == "C-2":
+        return "COMMERCIAL_SHOPPING"
+    elif zone[0:3] == "R-1":
+        return "RESIDENTIAL_SF"
+    elif zone[0:3] == "R-3":
+        return "COMMERCIAL_RESIDENTIAL"
+    else:
+        return "UNKNOWN"
+
+
 trimstr = udf(trim, StringType())
 upperstr = udf(upper, StringType())
 sacramento_udf = udf(sacramento, StringType())
 create_parcel_id_udf = udf(create_parcel_id, StringType())
 source_info_2023_udf = udf(source_info_2023, StringType())
+zoning_udf = udf(zoning, StringType())
 
 
 def main():
@@ -82,10 +94,11 @@ def main():
                .withColumnRenamed("MAIL_CITY", "MA_CITY") \
                .withColumnRenamed("MAIL_STATE", "MA_STATE") \
                .withColumnRenamed("CARE_OF", "MA_CARE_OF") \
-               .withColumnRenamed("MAIL_ZIP", "MA_ZIP_CODE")
+               .withColumnRenamed("MAIL_ZIP", "MA_ZIP_CODE") \
+               .withColumn("USE_TYPE", zoning_udf(df["ZONING"]))
 
-        df2 = df.select("COUNTY", "PARCEL_ID", "SOURCE_INFO_DATE", "ADDRESS_STREET_NUM", "ADDRESS_STREET_NAME", "ADDRESS_CITY", "OWNER_NAME", "MA_STREET_ADDRESS", "MA_CITY", "MA_STATE", "MA_ZIP_CODE", "MA_CARE_OF")
-        df3 = df.select("COUNTY", "PARCEL_ID", "TAX_RATE_AREA", "OWNER_CODE", "ZONING", "LAND_USE_CODE", "RECORDING_DATE", "RECORDING_PAGE", "DEED_TYPE", "LAND", "IM", "FIXTURE", "PP", "HO_EX", "EX", "VALUE_DT", "ACTION_CODE")
+        df2 = df.select("COUNTY", "PARCEL_ID", "SOURCE_INFO_DATE", "USE_TYPE", "ADDRESS_STREET_NUM", "ADDRESS_STREET_NAME", "ADDRESS_CITY", "OWNER_NAME", "MA_STREET_ADDRESS", "MA_CITY", "MA_STATE", "MA_ZIP_CODE", "MA_CARE_OF")
+        df3 = df.select("COUNTY", "PARCEL_ID", "USE_TYPE", "TAX_RATE_AREA", "OWNER_CODE", "ZONING", "LAND_USE_CODE", "RECORDING_DATE", "RECORDING_PAGE", "DEED_TYPE", "LAND", "IM", "FIXTURE", "PP", "HO_EX", "EX", "VALUE_DT", "ACTION_CODE")
 
 
         df2.show(50)
