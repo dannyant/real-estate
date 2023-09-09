@@ -24,7 +24,7 @@ conn = phoenixdb.connect(database_url, autocommit=True)
 #  -H 'sec-ch-ua-platform: "macOS"' \
 #  --compressed
 
-URL_ALAMEDA = 'https://eproptax.saccounty.net/servicev2/eproptax.svc/rest/BillSummary?parcel='
+URL_ALAMEDA = 'https://eproptax.saccounty.net/servicev2/eproptax.svc/rest/Redemption?parcel='
 def pull_sacramento_taxes(parcel_id):
   property_tax_html = pull_http(URL_ALAMEDA + parcel_id, as_text=True)
   return property_tax_html
@@ -48,10 +48,13 @@ while not isempty:
             if "System is temporarily unavailable" in content:
                 raise Exception("Unavaliable")
 
-            if "Unpaid" in content:
-                print(parcel_id)
+            if "\"TaxStatus\":\"Unpaid\"" in content:
+                print("Unpaid " + parcel_id)
 
-            cursor.execute("UPSERT INTO tax_info (PARCEL_ID, COUNTY, HTML_CONTENTS, LAST_DOWNLOADED) VALUES (?, ?, ?, ?)", (parcel_id, county, content, str(datetime.now())))
+            if "\"UnpaidFees\":[]" not in content:
+                print("no blank array " + parcel_id)
+
+                cursor.execute("UPSERT INTO tax_info (PARCEL_ID, COUNTY, HTML_CONTENTS, LAST_DOWNLOADED) VALUES (?, ?, ?, ?)", (parcel_id, county, content, str(datetime.now())))
             time.sleep(30)
     except Exception as ex:
         print(ex)
