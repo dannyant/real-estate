@@ -45,21 +45,20 @@ while not isempty:
         all_parcel_dict = cursor.fetchall()
         isempty = len(all_parcel_dict) == 0
         print("count = " + str(len(all_parcel_dict)) + " \t " + str(datetime.now()))
-        for parcel_dict in all_parcel_dict:
-            county = parcel_dict["COUNTY"]
+        for parcel_dict in [{"PARCEL_ID" : "00102100180000", "COUNTY" : "SACRAMENTO"}]:
             parcel_id = parcel_dict["PARCEL_ID"]
+            county = parcel_dict["COUNTY"]
             content = pull_sacramento_taxes(parcel_id)
             if "System is temporarily unavailable" in content:
                 raise Exception("Unavaliable")
 
             if '"IsDelinquent":true' in content:
-                print("Unpaid " + parcel_id)
                 json_data = json.loads(content)
                 delinquent = pull_sacramento_delinquent_taxes(parcel_id)
                 delinquent_data = json.loads(delinquent)
                 json_data["Delinquent"] = delinquent_data
                 content = json.dumps(json_data)
-                print(content)
+
             cursor.execute("UPSERT INTO tax_info (PARCEL_ID, COUNTY, HTML_CONTENTS, LAST_DOWNLOADED) VALUES (?, ?, ?, ?)", (parcel_id, county, content, str(datetime.now())))
             time.sleep(30)
     except Exception as ex:
