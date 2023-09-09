@@ -148,7 +148,7 @@ def main():
                 .option("zkUrl", "namenode:2181") \
                 .save()
 
-        df3 = df.select("COUNTY", "PARCEL_ID", "USE_TYPE", "TAX_RATE_AREA", "OWNER_CODE", "USE_CODE", "LAND_USE_CODE", "RECORDING_DATE", "RECORDING_PAGE", "DEED_TYPE", "LAND", "IM", "FIXTURE", "PP", "HO_EX", "EX", "VALUE_DT", "ACTION_CODE")
+        df3 = df.select("COUNTY", "PARCEL_ID", "USE_TYPE", "OWNER_CODE", "USE_CODE", "LAND_USE_CODE", "RECORDING_DATE", "RECORDING_PAGE", "DEED_TYPE", "LAND", "IM", "FIXTURE", "PP", "HO_EX", "EX", "VALUE_DT", "ACTION_CODE")
 
 
         df2.show(50)
