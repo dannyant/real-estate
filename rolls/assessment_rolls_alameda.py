@@ -139,6 +139,8 @@ def get_prev_date(date):
         return "2022-05-01"
     elif date == "2022-05-01":
         return "2017-11-01"
+    elif date == "2023-09-01":
+        return "2023-08-01"
     else:
         return None
 
