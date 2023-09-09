@@ -1,3 +1,4 @@
+import json
 import time
 import traceback
 from datetime import datetime
@@ -24,13 +25,16 @@ conn = phoenixdb.connect(database_url, autocommit=True)
 #  -H 'sec-ch-ua-platform: "macOS"' \
 #  --compressed
 
-URL_ALAMEDA = 'https://eproptax.saccounty.net/servicev2/eproptax.svc/rest/Redemption?parcel='
+URL_SACRAMENTO = 'https://eproptax.saccounty.net/servicev2/eproptax.svc/rest/BillSummary?parcel='
+URL_SACRAMENTO_DELINQUENT = 'https://eproptax.saccounty.net/servicev2/eproptax.svc/rest/Redemption?parcel='
+
 def pull_sacramento_taxes(parcel_id):
-  property_tax_html = pull_http(URL_ALAMEDA + parcel_id, as_text=True)
+  property_tax_html = pull_http(URL_SACRAMENTO + parcel_id, as_text=True)
   return property_tax_html
 
-def pull_taxes(data):
-  return pull_sacramento_taxes(parcel_id)
+def pull_sacramento_delinquent_taxes(parcel_id):
+  property_tax_html = pull_http(URL_SACRAMENTO_DELINQUENT + parcel_id, as_text=True)
+  return property_tax_html
 
 
 cursor = conn.cursor(cursor_factory=phoenixdb.cursor.DictCursor)
@@ -44,17 +48,19 @@ while not isempty:
         for parcel_dict in all_parcel_dict:
             county = parcel_dict["COUNTY"]
             parcel_id = parcel_dict["PARCEL_ID"]
-            content = pull_taxes(parcel_id)
+            content = pull_sacramento_taxes(parcel_id)
             if "System is temporarily unavailable" in content:
                 raise Exception("Unavaliable")
 
-            if "\"TaxStatus\":\"Unpaid\"" in content:
+            if '"IsDelinquent":true' in content:
                 print("Unpaid " + parcel_id)
-
-            if "\"UnpaidFees\":[]" not in content:
-                print("no blank array " + parcel_id)
-
-                cursor.execute("UPSERT INTO tax_info (PARCEL_ID, COUNTY, HTML_CONTENTS, LAST_DOWNLOADED) VALUES (?, ?, ?, ?)", (parcel_id, county, content, str(datetime.now())))
+                json_data = json.loads(content)
+                delinquent = pull_sacramento_delinquent_taxes(parcel_id)
+                delinquent_data = json.loads(delinquent)
+                json_data["Delinquent"] = delinquent_data
+                content = json.dumps(json_data)
+                print(content)
+            cursor.execute("UPSERT INTO tax_info (PARCEL_ID, COUNTY, HTML_CONTENTS, LAST_DOWNLOADED) VALUES (?, ?, ?, ?)", (parcel_id, county, content, str(datetime.now())))
             time.sleep(30)
     except Exception as ex:
         print(ex)
