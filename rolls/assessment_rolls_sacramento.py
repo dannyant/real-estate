@@ -50,6 +50,21 @@ def sacramento():
 def create_parcel_id(mapb, pg, pcl, psub):
     return mapb + pg + pcl + psub
 
+def source_info_2018():
+    return "2018"
+
+def source_info_2019():
+    return "2019"
+
+def source_info_2020():
+    return "2020"
+
+def source_info_2021():
+    return "2021"
+
+def source_info_2022():
+    return "2022"
+
 def source_info_2023():
     return "2023"
 
@@ -103,6 +118,11 @@ trimstr = udf(trim, StringType())
 upperstr = udf(upper, StringType())
 sacramento_udf = udf(sacramento, StringType())
 create_parcel_id_udf = udf(create_parcel_id, StringType())
+source_info_2018_udf = udf(source_info_2018, StringType())
+source_info_2019_udf = udf(source_info_2019, StringType())
+source_info_2020_udf = udf(source_info_2020, StringType())
+source_info_2021_udf = udf(source_info_2021, StringType())
+source_info_2022_udf = udf(source_info_2022, StringType())
 source_info_2023_udf = udf(source_info_2023, StringType())
 zoning_udf = udf(zoning, StringType())
 reformat_sale_time_udf = udf(reformat_sale_time, StringType())
@@ -112,9 +132,12 @@ def main():
     spark = SparkSession.builder.appName("ProcessRolls").getOrCreate()
     separators = {"2018_secured_roll.txt" : ';', "2019_secured_roll.txt" : ';', "2020_secured_roll.txt" : ';',
                   "2021_secured_roll.txt" : ';', "2022_secured_roll.txt" : ';', "2023_secured_roll.txt" : ';'}
-    udfs = {"2023_secured_roll.txt" : source_info_2023_udf}
+    udfs = {"2018_secured_roll.txt" : source_info_2018_udf, "2019_secured_roll.txt" : source_info_2019_udf,
+            "2020_secured_roll.txt" : source_info_2020_udf, "2021_secured_roll.txt" : source_info_2021_udf,
+            "2022_secured_roll.txt" : source_info_2022_udf, "2023_secured_roll.txt" : source_info_2023_udf}
     #for file in ["2018_secured_roll.txt", "2019_secured_roll.txt", "2020_secured_roll.txt", "2021_secured_roll.txt", "2022_secured_roll.txt", "2023_secured_roll.txt"]:
-    for file in ["2023_secured_roll.txt"]:
+    for file in ["2018_secured_roll.txt", "2019_secured_roll.txt", "2020_secured_roll.txt", "2021_secured_roll.txt",
+                 "2022_secured_roll.txt", "2023_secured_roll.txt"]:
         loc = "hdfs://namenode:8020/user/spark/apartments/rolls/sacramento/" + file
         df = spark.read.csv(loc, sep=separators[file], schema=schema)
         df = df.filter("MAPB != 'MAPB'")
