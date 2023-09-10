@@ -8,7 +8,6 @@ df = spark.read.format("org.apache.phoenix.spark").option("table", "ROLL_INFO") 
 df = df.groupby("COUNTY", "SOURCE_INFO_DATE")
 df = df.agg(count("*"))
 df_collect = df.collect()
-print(str(type(df_collect)) + " __ " + str(df_collect))
-df_list = df_collect.toList()
 
-print(str(type(df_list)) + " __ " + str(df_list))
+for lst_elem in df_collect:
+    print(str(type(lst_elem)) + " __ " + str(lst_elem))
