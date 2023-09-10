@@ -48,7 +48,7 @@ def sacramento():
     return "SACRAMENTO"
 
 def create_parcel_id(mapb, pg, pcl, psub):
-    return mapb + pg + pcl + psub
+    return str(mapb) + str(pg) + str(pcl) + str(psub)
 
 def source_info_2018():
     return "2018"
