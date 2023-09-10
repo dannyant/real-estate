@@ -1,6 +1,6 @@
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import count, collect_list, udf
-from pyspark.sql.types import BooleanType
+from pyspark.sql.types import BooleanType, StringType
 
 spark = SparkSession.builder.appName("ProcessRolls").getOrCreate()
 df = spark.read.format("org.apache.phoenix.spark").option("table", "ROLL_INFO") \
@@ -122,6 +122,12 @@ for row in df_collect:
                                                  "MA_SOURCE_CODE_LIST", "USE_CODE_LIST",
                                                  "ECON_UNIT_FLAG_LIST", "APN_INACTIVE_DATE_LIST")
 
+
+    def source_date():
+        return source_info_date
+    source_date_udf = udf(source_date, StringType())
+
+
     df_groupby_parcel = df_groupby_parcel \
         .withColumn("OWNER_NAME_CHANGE", last_list_value_change_udf(df_groupby_parcel["OWNER_NAME_LIST"])) \
         .withColumn("MA_STREET_ADDRESS_CHANGE", last_list_value_change_udf(df_groupby_parcel["MA_STREET_ADDRESS_LIST"])) \
@@ -133,6 +139,8 @@ for row in df_collect:
         .withColumn("MA_DIFFERENT_ADDR", newly_different_address_udf(df_groupby_parcel["ADDRESS_STREET_NUM_LIST"],
                                                                      df_groupby_parcel["ADDRESS_STREET_NAME_LIST"],
                                                                      df_groupby_parcel["MA_STREET_ADDRESS_LIST"]))
+
+    df_groupby_parcel = df_groupby_parcel.withColumn("SOURCE_INFO_DATE", source_date_udf())
 
     df_groupby_parcel.write.format("org.apache.phoenix.spark") \
         .mode("overwrite") \
