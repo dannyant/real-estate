@@ -39,10 +39,16 @@ def newly_different_address(address_num_lst, address_street_lst, ma_address_lst)
             (last_address_num not in last_ma_address or last_address_street not in last_ma_address)
     return False
 
+def get_last(array_list):
+    if array_list is not None and len(array_list) > 0:
+        return array_list[-1]
+    return None
+
 
 last_list_value_change_udf = udf(last_list_value_change, BooleanType())
 newly_different_city_udf = udf(newly_different_city, BooleanType())
 newly_different_address_udf = udf(newly_different_address, BooleanType())
+get_last_udf = udf(get_last, BooleanType())
 
 
 for row in df_collect:
@@ -99,11 +105,20 @@ for row in df_collect:
              collect_list("ADDRESS_STREET_NAME").alias("ADDRESS_STREET_NAME_LIST")
              )
 
-    df_groupby_parcel = df_groupby_parcel.select("COUNTY", "PARCEL_ID", "USE_TYPE_LIST",
-                                                 "PRI_TRA_LIST", "SEC_TRA_LIST", "ADDRESS_STREET_NUM_LIST",
-                                                 "ADDRESS_UNIT_NUM_LIST",
-                                                 "ADDRESS_CITY_LIST", "ADDRESS_ZIP_EXTENSION_LIST", "ADDRESS_ZIP_LIST",
-                                                 "TAXES_LAND_VALUE_LIST",
+    df_groupby_parcel = df_groupby_parcel\
+        .withColumn("USE_TYPE", get_last_udf(df_groupby_parcel["USE_TYPE_LIST"])) \
+        .withColumn("PRI_TRA", get_last_udf(df_groupby_parcel["PRI_TRA_LIST"])) \
+        .withColumn("SEC_TRA", get_last_udf(df_groupby_parcel["SEC_TRA_LIST"])) \
+        .withColumn("ADDRESS_STREET_NUM", get_last_udf(df_groupby_parcel["ADDRESS_STREET_NUM_LIST"])) \
+        .withColumn("ADDRESS_STREET_NAME", get_last_udf(df_groupby_parcel["ADDRESS_STREET_NAME_LIST"])) \
+        .withColumn("ADDRESS_UNIT_NUM", get_last_udf(df_groupby_parcel["ADDRESS_UNIT_NUM_LIST"])) \
+        .withColumn("ADDRESS_CITY", get_last_udf(df_groupby_parcel["ADDRESS_CITY_LIST"])) \
+        .withColumn("ADDRESS_ZIP", get_last_udf(df_groupby_parcel["ADDRESS_ZIP_LIST"])) \
+        .withColumn("ADDRESS_ZIP_EXTENSION", get_last_udf(df_groupby_parcel["ADDRESS_ZIP_EXTENSION_LIST"])) \
+
+    df_groupby_parcel = df_groupby_parcel.select("COUNTY", "PARCEL_ID", "USE_TYPE", "PRI_TRA", "SEC_TRA",
+                                                 "ADDRESS_STREET_NUM", "ADDRESS_UNIT_NUM", "ADDRESS_CITY",
+                                                 "ADDRESS_ZIP_EXTENSION", "ADDRESS_ZIP", "TAXES_LAND_VALUE_LIST",
                                                  "TAXES_IMPROVEMENT_VALUE_LIST", "TAXES_IMPROVEMENT_VALUE_LIST",
                                                  "CLCA_LAND_VALUE_LIST",
                                                  "CLCA_IMPROVEMENT_VALUE_LIST", "FIXTURES_VALUE_LIST",
