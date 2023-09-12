@@ -116,27 +116,6 @@ for row in df_collect:
         .withColumn("ADDRESS_ZIP", get_last_udf(df_groupby_parcel["ADDRESS_ZIP_LIST"])) \
         .withColumn("ADDRESS_ZIP_EXTENSION", get_last_udf(df_groupby_parcel["ADDRESS_ZIP_EXTENSION_LIST"])) \
 
-    df_groupby_parcel = df_groupby_parcel.select("COUNTY", "PARCEL_ID", "USE_TYPE", "PRI_TRA", "SEC_TRA",
-                                                 "ADDRESS_STREET_NUM", "ADDRESS_UNIT_NUM", "ADDRESS_CITY",
-                                                 "ADDRESS_ZIP_EXTENSION", "ADDRESS_ZIP", "TAXES_LAND_VALUE_LIST",
-                                                 "TAXES_IMPROVEMENT_VALUE_LIST", "TAXES_IMPROVEMENT_VALUE_LIST",
-                                                 "CLCA_LAND_VALUE_LIST",
-                                                 "CLCA_IMPROVEMENT_VALUE_LIST", "FIXTURES_VALUE_LIST",
-                                                 "ADDRESS_STREET_NAME_LIST",
-                                                 "PERSONAL_PROPERTY_VALUE_LIST", "HPP_VALUE_LIST",
-                                                 "HOMEOWNERS_EXEMPTION_VALUE_LIST",
-                                                 "OTHER_EXEMPTION_VALUE_LIST", "NET_TOTAL_VALUE_LIST",
-                                                 "LAST_DOC_PREFIX_LIST", "LAST_DOC_SERIES_LIST",
-                                                 "LAST_DOC_DATE_LIST", "LAST_DOC_INPUT_DATE_LIST", "OWNER_NAME_LIST",
-                                                 "MA_CARE_OF_LIST",
-                                                 "MA_ATTN_NAME_LIST", "MA_STREET_ADDRESS_LIST", "MA_UNIT_NUMBER_LIST",
-                                                 "MA_CITY_LIST",
-                                                 "MA_STATE_LIST", "MA_ZIP_CODE_LIST", "MA_ZIP_CODE_EXTENSION_LIST",
-                                                 "MA_BARECODE_WALK_SEQ_LIST",
-                                                 "MA_BARCODE_CHECK_DIGIT_LIST", "MA_EFFECTIVE_DATE_LIST",
-                                                 "MA_SOURCE_CODE_LIST", "USE_CODE_LIST",
-                                                 "ECON_UNIT_FLAG_LIST", "APN_INACTIVE_DATE_LIST")
-
 
     def source_date():
         return source_info_date
@@ -154,6 +133,29 @@ for row in df_collect:
         .withColumn("MA_DIFFERENT_ADDR", newly_different_address_udf(df_groupby_parcel["ADDRESS_STREET_NUM_LIST"],
                                                                      df_groupby_parcel["ADDRESS_STREET_NAME_LIST"],
                                                                      df_groupby_parcel["MA_STREET_ADDRESS_LIST"]))
+
+
+    df_groupby_parcel = df_groupby_parcel.select("COUNTY", "PARCEL_ID", "USE_TYPE", "PRI_TRA", "SEC_TRA",
+                                                 "ADDRESS_STREET_NUM", "ADDRESS_UNIT_NUM", "ADDRESS_CITY",
+                                                 "ADDRESS_ZIP_EXTENSION", "ADDRESS_ZIP", "TAXES_LAND_VALUE_LIST",
+                                                 "TAXES_IMPROVEMENT_VALUE_LIST", "TAXES_IMPROVEMENT_VALUE_LIST",
+                                                 "CLCA_LAND_VALUE_LIST", "OWNER_NAME_CHANGE",
+                                                 "CLCA_IMPROVEMENT_VALUE_LIST", "FIXTURES_VALUE_LIST",
+                                                 "ADDRESS_STREET_NAME_LIST", "MA_STREET_ADDRESS_CHANGE",
+                                                 "PERSONAL_PROPERTY_VALUE_LIST", "HPP_VALUE_LIST",
+                                                 "HOMEOWNERS_EXEMPTION_VALUE_LIST", "MA_CITY_CHANGE",
+                                                 "OTHER_EXEMPTION_VALUE_LIST", "NET_TOTAL_VALUE_LIST",
+                                                 "LAST_DOC_PREFIX_LIST", "LAST_DOC_SERIES_LIST",
+                                                 "LAST_DOC_DATE_LIST", "LAST_DOC_INPUT_DATE_LIST", "OWNER_NAME_LIST",
+                                                 "MA_CARE_OF_LIST", "MA_STATE_CHANGE", "MA_DIFFERENT_ADDR",
+                                                 "MA_ATTN_NAME_LIST", "MA_STREET_ADDRESS_LIST", "MA_UNIT_NUMBER_LIST",
+                                                 "MA_CITY_LIST", "LAST_DOC_DATE_CHANGE",
+                                                 "MA_STATE_LIST", "MA_ZIP_CODE_LIST", "MA_ZIP_CODE_EXTENSION_LIST",
+                                                 "MA_BARECODE_WALK_SEQ_LIST", "MA_DIFFERENT_CITY",
+                                                 "MA_BARCODE_CHECK_DIGIT_LIST", "MA_EFFECTIVE_DATE_LIST",
+                                                 "MA_SOURCE_CODE_LIST", "USE_CODE_LIST",
+                                                 "ECON_UNIT_FLAG_LIST", "APN_INACTIVE_DATE_LIST")
+
 
     df_groupby_parcel = df_groupby_parcel.withColumn("SOURCE_INFO_DATE", source_date_udf())
 
