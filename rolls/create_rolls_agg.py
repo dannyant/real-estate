@@ -40,10 +40,12 @@ def newly_different_address(address_num_lst, address_street_lst, ma_address_lst)
     return False
 
 def get_last(array_list):
-    print("array " + str(array_list))
+    returnVal = None
     if array_list is not None and len(array_list) > 0:
-        return array_list[-1]
-    return None
+        returnVal = array_list[-1]
+
+    print("array " + str(array_list) + " " + str(len(array_list)) + " " + str(returnVal))
+    return returnVal
 
 
 last_list_value_change_udf = udf(last_list_value_change, BooleanType())
