@@ -141,7 +141,7 @@ for row in df_collect:
                                                  "TAXES_IMPROVEMENT_VALUE_LIST", "TAXES_IMPROVEMENT_VALUE_LIST",
                                                  "CLCA_LAND_VALUE_LIST", "OWNER_NAME_CHANGE",
                                                  "CLCA_IMPROVEMENT_VALUE_LIST", "FIXTURES_VALUE_LIST",
-                                                 "ADDRESS_STREET_NAME_LIST", "MA_STREET_ADDRESS_CHANGE",
+                                                 "ADDRESS_STREET_NAME", "MA_STREET_ADDRESS_CHANGE",
                                                  "PERSONAL_PROPERTY_VALUE_LIST", "HPP_VALUE_LIST",
                                                  "HOMEOWNERS_EXEMPTION_VALUE_LIST", "MA_CITY_CHANGE",
                                                  "OTHER_EXEMPTION_VALUE_LIST", "NET_TOTAL_VALUE_LIST",
