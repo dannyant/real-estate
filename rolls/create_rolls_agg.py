@@ -44,7 +44,6 @@ def get_last(array_list):
     if array_list is not None and len(array_list) > 0:
         returnVal = array_list[-1]
 
-    print("array " + str(array_list) + " " + str(len(array_list)) + " " + str(returnVal))
     return returnVal
 
 
@@ -164,6 +163,8 @@ for row in df_collect:
 
 
     df_groupby_parcel = df_groupby_parcel.withColumn("SOURCE_INFO_DATE", source_date_udf())
+
+    df_groupby_parcel.show(5)
 
     df_groupby_parcel.write.format("org.apache.phoenix.spark") \
         .mode("overwrite") \
