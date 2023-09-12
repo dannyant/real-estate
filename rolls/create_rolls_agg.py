@@ -40,6 +40,7 @@ def newly_different_address(address_num_lst, address_street_lst, ma_address_lst)
     return False
 
 def get_last(array_list):
+    print("array " + str(array_list))
     if array_list is not None and len(array_list) > 0:
         return array_list[-1]
     return None
