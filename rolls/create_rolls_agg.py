@@ -50,7 +50,7 @@ def get_last(array_list):
 last_list_value_change_udf = udf(last_list_value_change, BooleanType())
 newly_different_city_udf = udf(newly_different_city, BooleanType())
 newly_different_address_udf = udf(newly_different_address, BooleanType())
-get_last_udf = udf(get_last, BooleanType())
+get_last_udf = udf(get_last, StringType())
 
 
 for row in df_collect:
@@ -163,8 +163,6 @@ for row in df_collect:
 
 
     df_groupby_parcel = df_groupby_parcel.withColumn("SOURCE_INFO_DATE", source_date_udf())
-
-    df_groupby_parcel.show(5)
 
     df_groupby_parcel.write.format("org.apache.phoenix.spark") \
         .mode("overwrite") \
