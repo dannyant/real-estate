@@ -5,7 +5,7 @@ from pyspark.sql import SparkSession
 import re
 
 from pyspark.sql.functions import udf
-from pyspark.sql.types import FloatType
+from pyspark.sql.types import FloatType, StringType, BooleanType
 
 current_tax_bill_re = re.compile("DISPLAY CURRENT BILL RESULTS[^$]*\\$([0-9,.]*).*DISPLAY PRIOR YEAR DELINQUENT TAX INFORMATION")
 delinquent_tax_bill_re = re.compile("DISPLAY PRIOR YEAR DELINQUENT TAX INFORMATION[^$]*\\$([0-9,.]*).*DISPLAY TAX HISTORY")
@@ -59,8 +59,22 @@ def current_taxes(county, html_content):
 def delinquent_taxes(county, html_content):
     return delinquent_function[county](html_content)
 
+def interesting_property(delinquent_taxes):
+    return delinquent_taxes is not None and delinquent_taxes > 10000
+
+def max_date(county):
+    if county == "ALAMEDA":
+        return "2023-09-01"
+    elif county == "SACRAMENTO":
+        return "2023"
+    else:
+        return "UNKNOWN"
+
+
 current_udf = udf(current_taxes, FloatType())
 delinquent_udf = udf(delinquent_taxes, FloatType())
+interesting_property_udf = udf(interesting_property, BooleanType())
+max_date_udf = udf(max_date, StringType())
 
 
 def main():
@@ -76,6 +90,19 @@ def main():
     df.write.format("org.apache.phoenix.spark") \
         .mode("overwrite") \
         .option("table", "TAX_INFO_STATUS") \
+        .option("zkUrl", "namenode:2181") \
+        .save()
+
+
+    df = spark.read.format("org.apache.phoenix.spark").option("table", "TAX_INFO_STATUS") \
+        .option("zkUrl", "namenode:2181").load()
+
+    df = df.withColumn("SOURCE_INFO_DATE", max_date_udf(df["COUNTY"])) \
+           .withColumn("INTERESTING_PROPERTY", interesting_property_udf(df["DELINQUENT_TAX_BILL"]))
+
+    df.write.format("org.apache.phoenix.spark") \
+        .mode("overwrite") \
+        .option("table", "ROLL_INFO_AGG") \
         .option("zkUrl", "namenode:2181") \
         .save()
 
