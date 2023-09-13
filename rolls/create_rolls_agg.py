@@ -136,11 +136,7 @@ for row in df_collect:
                                                                      df_groupby_parcel["ADDRESS_STREET_NAME_LIST"],
                                                                      df_groupby_parcel["MA_STREET_ADDRESS_LIST"]))
 
-
     df_groupby_parcel = df_groupby_parcel.select("COUNTY", "PARCEL_ID", "USE_TYPE", "PRI_TRA", "SEC_TRA",
-                                                 "ADDRESS_STREET_NUM_LIST", "ADDRESS_STREET_NAME_LIST",
-                                                 "ADDRESS_UNIT_NUM_LIST", "ADDRESS_CITY_LIST", "ADDRESS_ZIP_LIST",
-                                                 "ADDRESS_ZIP_EXTENSION_LIST",
                                                  "ADDRESS_STREET_NUM", "ADDRESS_UNIT_NUM", "ADDRESS_CITY",
                                                  "ADDRESS_ZIP_EXTENSION", "ADDRESS_ZIP", "TAXES_LAND_VALUE_LIST",
                                                  "TAXES_IMPROVEMENT_VALUE_LIST", "TAXES_IMPROVEMENT_VALUE_LIST",
