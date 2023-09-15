@@ -132,11 +132,10 @@ def main():
 
         df = spark.read.text(madr_loc)
         madr_df = df.select(
-            df.value.substr(1, 6).alias('VOL'),
-            df.value.substr(7, 10).alias('KEY'),
-            df.value.substr(11, 100).alias('BLOCK')
+            df.value.substr(1, 12).alias('PARCEL_ID'),
+            df.value.substr(20, 100).alias('BLOCK')
         )
-        madr_df.show(20)
+        madr_df.show(200)
 
         ownr_loc = "hdfs://namenode:8020/user/spark/apartments/rolls/sanfrancisco/" + ownr
         ownr_df = spark.read.csv(ownr_loc, sep='\t', schema=schema_ownr)
