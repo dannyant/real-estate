@@ -129,7 +129,16 @@ def main():
         secd = file_map["secd"]
 
         madr_loc = "hdfs://namenode:8020/user/spark/apartments/rolls/sanfrancisco/" + madr
-        madr_df = spark.read.csv(madr_loc, sep='\t', schema=schema_madr)
+
+        df = spark.read.text(madr_loc)
+        madr_df = df.select(
+            df.value.substr(0, 1).alias('CNTL-BYTE'),
+            df.value.substr(1, 3).alias('VOL'),
+            df.value.substr(3, 12).alias('KEY'),
+            df.value.substr(12, 17).alias('BLOCK'),
+            df.value.substr(17, 21).alias('BLOCK-N'),
+            df.value.substr(21, 22).alias('BLOCK-S')
+        )
         madr_df.show(20)
 
         ownr_loc = "hdfs://namenode:8020/user/spark/apartments/rolls/sanfrancisco/" + ownr
