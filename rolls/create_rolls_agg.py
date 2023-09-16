@@ -1,6 +1,6 @@
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import count, collect_list, udf
-from pyspark.sql.types import BooleanType, StringType
+from pyspark.sql.types import BooleanType, StringType, IntegerType
 
 spark = SparkSession.builder.appName("ProcessRolls").getOrCreate()
 df = spark.read.format("org.apache.phoenix.spark").option("table", "ROLL_INFO") \
@@ -51,6 +51,7 @@ last_list_value_change_udf = udf(last_list_value_change, BooleanType())
 newly_different_city_udf = udf(newly_different_city, BooleanType())
 newly_different_address_udf = udf(newly_different_address, BooleanType())
 get_last_udf = udf(get_last, StringType())
+get_last_int_udf = udf(get_last, IntegerType())
 
 
 for row in df_collect:
@@ -117,6 +118,13 @@ for row in df_collect:
         .withColumn("ADDRESS_CITY", get_last_udf(df_groupby_parcel["ADDRESS_CITY_LIST"])) \
         .withColumn("ADDRESS_ZIP", get_last_udf(df_groupby_parcel["ADDRESS_ZIP_LIST"])) \
         .withColumn("ADDRESS_ZIP_EXTENSION", get_last_udf(df_groupby_parcel["ADDRESS_ZIP_EXTENSION_LIST"])) \
+        .withColumn("OWNER_NAME_LAST", get_last_udf(df_groupby_parcel["OWNER_NAME_LIST"])) \
+        .withColumn("MA_STREET_ADDRESS_LAST", get_last_udf(df_groupby_parcel["MA_STREET_ADDRESS_LIST"])) \
+        .withColumn("MA_UNIT_NUMBER_LAST", get_last_udf(df_groupby_parcel["MA_UNIT_NUMBER_LIST"])) \
+        .withColumn("MA_CITY_LAST", get_last_udf(df_groupby_parcel["MA_CITY_LIST"])) \
+        .withColumn("MA_STATE_LAST", get_last_udf(df_groupby_parcel["MA_STATE_LIST"])) \
+        .withColumn("MA_ZIP_CODE_LAST", get_last_udf(df_groupby_parcel["MA_ZIP_CODE_LIST"])) \
+        .withColumn("HOMEOWNERS_EXEMPTION_VALUE_LAST", get_last_int_udf(df_groupby_parcel["HOMEOWNERS_EXEMPTION_VALUE_LIST"]))
 
 
     def source_date():
@@ -155,8 +163,9 @@ for row in df_collect:
                                                  "MA_BARECODE_WALK_SEQ_LIST", "MA_DIFFERENT_CITY",
                                                  "MA_BARCODE_CHECK_DIGIT_LIST", "MA_EFFECTIVE_DATE_LIST",
                                                  "MA_SOURCE_CODE_LIST", "USE_CODE_LIST",
-                                                 "ECON_UNIT_FLAG_LIST", "APN_INACTIVE_DATE_LIST")
-
+                                                 "ECON_UNIT_FLAG_LIST", "APN_INACTIVE_DATE_LIST", "OWNER_NAME_LAST",
+                                                 "MA_STREET_ADDRESS_LAST", "MA_UNIT_NUMBER_LAST", "MA_CITY_LAST",
+                                                 "MA_STATE_LAST", "MA_ZIP_CODE_LAST", "HOMEOWNERS_EXEMPTION_VALUE_LAST")
 
     df_groupby_parcel = df_groupby_parcel.withColumn("SOURCE_INFO_DATE", source_date_udf())
 
