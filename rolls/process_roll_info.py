@@ -7,6 +7,8 @@ df = spark.read.format("org.apache.phoenix.spark").option("table", "ROLL_INFO") 
     .option("zkUrl", "namenode:2181").load()
 
 def owner_lives_at_address(address_num, address_street, ma_address):
+    if address_num is None or ma_address is None or ma_address is None:
+        return False
     return address_num in ma_address and address_street in ma_address
 
 owner_lives_at_address_udf = udf(owner_lives_at_address, BooleanType())
