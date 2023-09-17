@@ -6,7 +6,7 @@ from datetime import datetime
 import phoenixdb.cursor
 from base_http_pull import pull_http
 
-database_url = 'http://namenode:8765/'
+database_url = 'http://datanode3:8765/'
 conn = phoenixdb.connect(database_url, autocommit=True)
 
 
