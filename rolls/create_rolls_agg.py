@@ -10,6 +10,7 @@ df = df.groupby("COUNTY", "SOURCE_INFO_DATE")
 df = df.agg(count("*"))
 df_collect = df.collect()
 
+
 def last_list_value_change(owner_list):
     if len(owner_list) > 1:
         last_owner = owner_list[-1]
@@ -39,6 +40,7 @@ def newly_different_address(address_num_lst, address_street_lst, ma_address_lst)
             (last_address_num not in last_ma_address or last_address_street not in last_ma_address)
     return False
 
+
 def get_last(array_list):
     returnVal = None
     if array_list is not None and len(array_list) > 0:
@@ -47,12 +49,20 @@ def get_last(array_list):
     return returnVal
 
 
+def owner_move_out(array_list):
+    if array_list is None or len(array_list) < 2:
+        return False
+    last = array_list[-1]
+    prev = array_list[-2]
+    return last is False and prev is True
+
+
 last_list_value_change_udf = udf(last_list_value_change, BooleanType())
 newly_different_city_udf = udf(newly_different_city, BooleanType())
 newly_different_address_udf = udf(newly_different_address, BooleanType())
 get_last_udf = udf(get_last, StringType())
 get_last_int_udf = udf(get_last, IntegerType())
-
+owner_move_out_udf = udf(owner_move_out, BooleanType())
 
 for row in df_collect:
     row_dict = row.asDict()
@@ -105,10 +115,11 @@ for row in df_collect:
              collect_list("USE_CODE").alias("USE_CODE_LIST"),
              collect_list("ECON_UNIT_FLAG").alias("ECON_UNIT_FLAG_LIST"),
              collect_list("APN_INACTIVE_DATE").alias("APN_INACTIVE_DATE_LIST"),
-             collect_list("ADDRESS_STREET_NAME").alias("ADDRESS_STREET_NAME_LIST")
+             collect_list("ADDRESS_STREET_NAME").alias("ADDRESS_STREET_NAME_LIST"),
+             collect_list("OWNER_LIVES_IN_PROPERTY").alias("OWNER_LIVES_IN_PROPERTY_LIST")
              )
 
-    df_groupby_parcel = df_groupby_parcel\
+    df_groupby_parcel = df_groupby_parcel \
         .withColumn("USE_TYPE", get_last_udf(df_groupby_parcel["USE_TYPE_LIST"])) \
         .withColumn("PRI_TRA", get_last_udf(df_groupby_parcel["PRI_TRA_LIST"])) \
         .withColumn("SEC_TRA", get_last_udf(df_groupby_parcel["SEC_TRA_LIST"])) \
@@ -124,13 +135,15 @@ for row in df_collect:
         .withColumn("MA_CITY_LAST", get_last_udf(df_groupby_parcel["MA_CITY_LIST"])) \
         .withColumn("MA_STATE_LAST", get_last_udf(df_groupby_parcel["MA_STATE_LIST"])) \
         .withColumn("MA_ZIP_CODE_LAST", get_last_udf(df_groupby_parcel["MA_ZIP_CODE_LIST"])) \
-        .withColumn("HOMEOWNERS_EXEMPTION_VALUE_LAST", get_last_int_udf(df_groupby_parcel["HOMEOWNERS_EXEMPTION_VALUE_LIST"]))
+        .withColumn("HOMEOWNERS_EXEMPTION_VALUE_LAST",
+                    get_last_int_udf(df_groupby_parcel["HOMEOWNERS_EXEMPTION_VALUE_LIST"]))
 
 
     def source_date():
         return source_info_date
-    source_date_udf = udf(source_date, StringType())
 
+
+    source_date_udf = udf(source_date, StringType())
 
     df_groupby_parcel = df_groupby_parcel \
         .withColumn("OWNER_NAME_CHANGE", last_list_value_change_udf(df_groupby_parcel["OWNER_NAME_LIST"])) \
@@ -142,7 +155,9 @@ for row in df_collect:
                                                                   df_groupby_parcel["MA_CITY_LIST"])) \
         .withColumn("MA_DIFFERENT_ADDR", newly_different_address_udf(df_groupby_parcel["ADDRESS_STREET_NUM_LIST"],
                                                                      df_groupby_parcel["ADDRESS_STREET_NAME_LIST"],
-                                                                     df_groupby_parcel["MA_STREET_ADDRESS_LIST"]))
+                                                                     df_groupby_parcel["MA_STREET_ADDRESS_LIST"])) \
+        .withColumn("OWNER_MOVE_OUT", owner_move_out_udf(df_groupby_parcel["OWNER_LIVES_IN_PROPERTY_LIST"]))
+
 
     df_groupby_parcel = df_groupby_parcel.select("COUNTY", "PARCEL_ID", "USE_TYPE", "PRI_TRA", "SEC_TRA",
                                                  "ADDRESS_STREET_NUM", "ADDRESS_UNIT_NUM", "ADDRESS_CITY",
@@ -159,10 +174,11 @@ for row in df_collect:
                                                  "MA_CARE_OF_LIST", "MA_STATE_CHANGE", "MA_DIFFERENT_ADDR",
                                                  "MA_ATTN_NAME_LIST", "MA_STREET_ADDRESS_LIST", "MA_UNIT_NUMBER_LIST",
                                                  "MA_CITY_LIST", "LAST_DOC_DATE_CHANGE",
+                                                 "OWNER_LIVES_IN_PROPERTY_LIST",
                                                  "MA_STATE_LIST", "MA_ZIP_CODE_LIST", "MA_ZIP_CODE_EXTENSION_LIST",
                                                  "MA_BARECODE_WALK_SEQ_LIST", "MA_DIFFERENT_CITY",
                                                  "MA_BARCODE_CHECK_DIGIT_LIST", "MA_EFFECTIVE_DATE_LIST",
-                                                 "MA_SOURCE_CODE_LIST", "USE_CODE_LIST",
+                                                 "MA_SOURCE_CODE_LIST", "USE_CODE_LIST", "OWNER_MOVE_OUT",
                                                  "ECON_UNIT_FLAG_LIST", "APN_INACTIVE_DATE_LIST", "OWNER_NAME_LAST",
                                                  "MA_STREET_ADDRESS_LAST", "MA_UNIT_NUMBER_LAST", "MA_CITY_LAST",
                                                  "MA_STATE_LAST", "MA_ZIP_CODE_LAST", "HOMEOWNERS_EXEMPTION_VALUE_LAST")
@@ -174,4 +190,3 @@ for row in df_collect:
         .option("table", "ROLL_INFO_AGG") \
         .option("zkUrl", "namenode:2181") \
         .save()
-
