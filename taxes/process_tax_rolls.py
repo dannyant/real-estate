@@ -30,6 +30,8 @@ def parse_current_tax_bill_alameda(html_content):
 
 def parse_current_tax_bill_sacramento(json_content):
     try:
+        if json_content is None:
+            return None
         json_data = json.loads(json_content)
         return float(json_data["Bills"][0]["BillAmount"])
     except:
