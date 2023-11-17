@@ -137,6 +137,9 @@ def literal_sep23():
 def literal_oct23():
     return "2023-10-01"
 
+def literal_nov23():
+    return "2023-11-01"
+
 def get_prev_date(date):
     if date == "2023-08-01":
         return "2022-05-01"
@@ -144,6 +147,10 @@ def get_prev_date(date):
         return "2017-11-01"
     elif date == "2023-09-01":
         return "2023-08-01"
+    elif date == "2023-10-01":
+        return "2023-09-01"
+    elif date == "2023-11-01":
+        return "2023-10-01"
     else:
         return None
 
@@ -210,6 +217,7 @@ literal_may22_udf = udf(literal_may22, StringType())
 literal_aug23_udf = udf(literal_aug23, StringType())
 literal_sep23_udf = udf(literal_sep23, StringType())
 literal_oct23_udf = udf(literal_oct23, StringType())
+literal_nov23_udf = udf(literal_nov23, StringType())
 get_prev_date_udf = udf(get_prev_date, StringType())
 
 
@@ -228,7 +236,8 @@ def main():
     spark = SparkSession.builder.appName("ProcessRolls").getOrCreate()
     file_map = {"IE670-11-01-17.TXT" : literal_nov17_udf, "IE670-05-01-22.TXT" : literal_may22_udf,
                 "IE670-08-01-23.TXT" : literal_aug23_udf, "IE670-09-01-23.TXT" : literal_sep23_udf,
-                "IE670-10-3-23.TXT" : literal_oct23_udf}
+                "IE670-10-3-23.TXT" : literal_oct23_udf, "IE670-11-01-23.TXT" : literal_nov23_udf}
+    file_map = {"IE670-10-3-23.TXT" : literal_oct23_udf, "IE670-11-01-23.TXT" : literal_nov23_udf}
     for file in ["IE670-10-3-23.TXT"]:
         loc = "hdfs://namenode:8020/user/spark/apartments/rolls/alameda/" + file
         df = spark.read.csv(loc, sep="\t", schema=schema)
